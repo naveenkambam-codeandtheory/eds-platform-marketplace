@@ -1,0 +1,2312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Brand EDS — Project Setup Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12151A; --ink-2:#1C2128; --steel:#5E6C7A; --steel-lt:#8A97A3;
+    --paper:#E7E8E3; --paper-2:#DEDFD9; --paper-3:#F2F3EF;
+    --signal:#F0B429; --signal-dk:#B5820E; --stop:#B23A2F; --go:#38715A;
+    --rule:#C6C8C0;
+    --f-display:"Barlow Condensed","Oswald","Arial Narrow",sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+    --f-mono:"IBM Plex Mono","SF Mono",ui-monospace,monospace;
+    --rail:272px; --measure:76ch;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:1.5rem}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:var(--ink);text-decoration-color:var(--signal-dk);text-underline-offset:3px}
+  a:focus-visible,button:focus-visible{outline:3px solid var(--signal-dk);outline-offset:2px}
+
+  .shell{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);max-width:1340px;margin:0 auto}
+  .rail{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:2rem 1.25rem 3rem;border-right:1px solid var(--rule);background:var(--paper-3)}
+  .rail-title{font-family:var(--f-display);font-size:1.35rem;font-weight:700;line-height:1.05;margin:0 0 .2rem}
+  .rail-sub{font-size:.78rem;color:var(--steel);margin:0 0 1.4rem;line-height:1.4}
+  .rail nav ol{list-style:none;margin:0 0 1.1rem;padding:0}
+  .rail nav a{display:grid;grid-template-columns:2.2rem 1fr;padding:.3rem 0;font-size:.85rem;text-decoration:none;color:var(--ink-2)}
+  .rail nav a .n{font-family:var(--f-mono);font-size:.7rem;color:var(--steel-lt)}
+  .rail nav a:hover{color:#000}
+  .rail nav a:hover .n{color:var(--signal-dk)}
+  .rail nav a[aria-current="true"]{font-weight:600}
+  .rail nav a[aria-current="true"] .n{color:var(--signal-dk);font-weight:500}
+  .rail h3{font-family:var(--f-mono);font-size:.68rem;font-weight:400;color:var(--steel);margin:1.3rem 0 .4rem;padding-bottom:.25rem;border-bottom:1px solid var(--rule)}
+
+  main{padding:0 0 6rem;min-width:0}
+  .plate{background:var(--ink);color:var(--paper);padding:2.75rem 2.5rem 2.25rem;border-bottom:6px solid var(--signal)}
+  .plate .stamp{font-family:var(--f-mono);font-size:.7rem;color:var(--signal);letter-spacing:.06em;margin:0 0 1.1rem}
+  .plate h1{font-family:var(--f-display);font-weight:700;font-size:clamp(2.4rem,5.4vw,4rem);line-height:.98;margin:0 0 .75rem;max-width:19ch}
+  .plate p{max-width:62ch;color:#C9CDD2;margin:0 0 1.9rem;font-size:1.03rem}
+  .specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));border-top:1px solid #2C333B}
+  .specs div{padding:.9rem 1.1rem .9rem 0;border-right:1px solid #2C333B}
+  .specs div:last-child{border-right:0}
+  .specs dt{font-size:.72rem;color:var(--steel-lt);margin:0 0 .2rem}
+  .specs dd{margin:0;font-family:var(--f-display);font-size:1.55rem;font-weight:600;line-height:1;color:#fff}
+  .specs dd small{font-family:var(--f-body);font-size:.77rem;font-weight:400;color:#9AA5AF;display:block;margin-top:.28rem;line-height:1.3}
+
+  section{padding:3.25rem 2.5rem 0;max-width:var(--measure)}
+  section > h2{font-family:var(--f-display);font-size:2rem;font-weight:600;line-height:1.08;margin:0 0 .2rem;padding-top:1.4rem;border-top:3px solid var(--ink)}
+  .kicker{font-family:var(--f-mono);font-size:.72rem;color:var(--steel);margin:0 0 1.1rem}
+  h3{font-family:var(--f-display);font-size:1.32rem;font-weight:600;margin:2.1rem 0 .5rem;line-height:1.15}
+  h4{font-size:.98rem;font-weight:600;margin:1.4rem 0 .35rem}
+  p{margin:0 0 1rem}
+  ul,ol{margin:0 0 1rem;padding-left:1.25rem}
+  li{margin-bottom:.35rem}
+  .lede{font-size:1.07rem;color:var(--ink-2)}
+
+  table{width:100%;border-collapse:collapse;margin:1.1rem 0 1.4rem;font-size:.89rem}
+  th,td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--rule);vertical-align:top}
+  thead th{background:var(--ink);color:var(--paper);font-weight:500;font-size:.78rem;border-bottom:0}
+  tbody tr:nth-child(even){background:var(--paper-3)}
+
+  .code{position:relative;margin:.9rem 0 1.2rem}
+  pre{margin:0;background:var(--ink);color:#E4E9ED;padding:1rem 1.1rem;overflow-x:auto;font-family:var(--f-mono);font-size:.81rem;line-height:1.62;border-left:4px solid var(--signal);tab-size:2}
+  code{font-family:var(--f-mono)}
+
+  /* Inline code only. Must be a DIRECT child: a descendant selector such as
+     `li code` also matches block code inside a numbered step, which paints a
+     pale background behind light-on-dark text and hides it completely. */
+  :is(p,li,td,th,dd,figcaption) > code,
+  :is(p,li,td,th,dd) > :is(strong,em,a) > code{
+    background:var(--paper-2);color:var(--ink);
+    padding:.08em .35em;border-radius:2px;font-size:.87em;
+  }
+
+  /* Belt and braces: block code never takes an inline-code background, whatever
+     a host page, extension, or reader mode injects. */
+  pre code{background:transparent!important;color:inherit!important;padding:0!important;border-radius:0!important;font-size:inherit!important}
+  .code .filename{font-family:var(--f-mono);font-size:.68rem;color:var(--paper);background:#2A313A;padding:.3rem .7rem;border-left:4px solid var(--signal)}
+  .copy{position:absolute;top:.4rem;right:.4rem;background:#2A313A;color:#C9CDD2;border:1px solid #3D4650;font-family:var(--f-mono);font-size:.67rem;padding:.24rem .5rem;cursor:pointer;border-radius:2px}
+  .copy:hover{background:#39424D;color:#fff}
+  .copy[data-done="1"]{background:var(--go);color:#fff;border-color:var(--go)}
+
+  .note{border-left:4px solid var(--steel);background:var(--paper-3);padding:.85rem 1.1rem;margin:1.1rem 0 1.4rem}
+  .note.warn{border-left-color:var(--stop)}
+  .note.key{border-left-color:var(--signal)}
+  .note p:last-child{margin-bottom:0}
+  .note b{font-family:var(--f-display);font-size:1.05rem;font-weight:600;display:block;margin-bottom:.2rem}
+
+  /* verification checkpoint */
+  .verify{border:1px solid var(--go);border-left-width:4px;background:#F1F5F2;padding:.7rem 1rem;margin:.9rem 0 1.3rem;font-size:.88rem}
+  .verify b{font-family:var(--f-mono);font-size:.68rem;color:var(--go);display:block;margin-bottom:.25rem}
+  .verify p{margin:0}
+  .verify code{background:#E1E9E4}
+
+  /* why-this-file disclosure */
+  .why{margin:.6rem 0 1.3rem;border:1px solid var(--rule);background:var(--paper-3)}
+  .why summary{cursor:pointer;padding:.55rem .9rem;font-family:var(--f-mono);font-size:.72rem;
+    color:var(--steel);list-style:none;display:flex;align-items:center;gap:.5rem;user-select:none}
+  .why summary::-webkit-details-marker{display:none}
+  .why summary::before{content:"+";font-family:var(--f-display);font-weight:700;
+    color:var(--signal-dk);font-size:.95rem;line-height:1;width:.8rem}
+  .why[open] summary::before{content:"\2212"}
+  .why summary:hover{color:var(--ink)}
+  .why summary:focus-visible{outline:3px solid var(--signal-dk);outline-offset:2px}
+  .why-body{padding:.1rem 1rem .9rem 2.25rem;font-size:.88rem;color:var(--ink-2);
+    border-top:1px solid var(--rule)}
+  .why-body p{margin:.7rem 0 0}
+  .why-body p:first-child{margin-top:.7rem}
+  .why-body ul{margin:.5rem 0 0;padding-left:1.15rem}
+  .why-body li{margin:.4rem 0 0}
+  .why-body li:first-child{margin-top:0}
+
+  /* procedures */
+  .steps{counter-reset:st;list-style:none;padding:0;margin:1.4rem 0 1rem}
+  .steps > li{counter-increment:st;display:grid;grid-template-columns:2.6rem 1fr;gap:.55rem;margin-bottom:1.9rem}
+  .steps > li::before{content:counter(st,decimal-leading-zero);font-family:var(--f-display);font-size:1.35rem;font-weight:700;color:var(--signal-dk);line-height:1.2;border-top:3px solid var(--ink);padding-top:.2rem}
+  .steps > li > div{border-top:1px solid var(--rule);padding-top:.35rem;min-width:0}
+  .steps h4{margin:0 0 .35rem;font-size:1.05rem;font-family:var(--f-display);font-weight:600}
+  .steps p{font-size:.93rem;margin-bottom:.6rem}
+  .steps ul,.steps ol{font-size:.92rem}
+
+  /* ladder */
+  .ladder{margin:1.5rem 0 1.8rem;border:1px solid var(--rule);background:var(--paper-3)}
+  .ladder-head{display:flex;justify-content:space-between;align-items:baseline;padding:.7rem 1rem;background:var(--ink);color:var(--paper)}
+  .ladder-head span{font-family:var(--f-mono);font-size:.7rem;color:var(--signal)}
+  .ladder-head b{font-family:var(--f-display);font-weight:600;font-size:1.05rem}
+  .rung{display:grid;grid-template-columns:62px 1fr;border-top:1px solid var(--rule)}
+  .rung:first-of-type{border-top:0}
+  .rung-id{display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--paper-2);border-right:1px solid var(--rule);padding:.75rem .4rem}
+  .rung-id b{font-family:var(--f-display);font-size:1.45rem;font-weight:700;line-height:1}
+  .rung-id i{font-style:normal;font-family:var(--f-mono);font-size:.58rem;color:var(--steel);margin-top:.15rem}
+  .rung-body{padding:.72rem 1rem}
+  .rung-body h5{margin:0 0 .15rem;font-size:.97rem;font-weight:600}
+  .rung-body p{margin:0;font-size:.87rem;color:var(--ink-2)}
+  .rung-cost{display:flex;gap:2px;margin-top:.45rem}
+  .rung-cost i{width:15px;height:5px;background:var(--rule);display:block}
+  .rung-cost i.on{background:var(--signal-dk)}
+  .rung--fork .rung-id{background:repeating-linear-gradient(45deg,var(--signal),var(--signal) 8px,var(--ink) 8px,var(--ink) 16px)}
+  .rung--fork .rung-id b,.rung--fork .rung-id i{background:var(--paper-2);padding:0 .25rem}
+  .rung--fork .rung-body{background:#FBF3DE}
+
+  .layers{margin:1.3rem 0 1.5rem;border:1px solid var(--rule)}
+  .layer{display:grid;grid-template-columns:100px 1fr;border-bottom:1px solid var(--rule);background:var(--paper-3)}
+  .layer:last-child{border-bottom:0}
+  .layer-tag{background:var(--ink);color:var(--signal);font-family:var(--f-mono);font-size:.71rem;display:flex;align-items:center;justify-content:center;padding:.7rem .3rem;text-align:center}
+  .layer-body{padding:.7rem 1rem;font-size:.89rem}
+  .layer-body b{display:block;font-family:var(--f-display);font-size:1.08rem;font-weight:600}
+  .layer:last-child .layer-tag{background:#2B333C;color:var(--steel-lt)}
+
+  .dd{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin:1.1rem 0 1.5rem}
+  .dd > div{background:var(--paper-3);padding:.85rem 1rem}
+  .dd h5{margin:0 0 .45rem;font-family:var(--f-mono);font-size:.71rem}
+  .dd .no h5{color:var(--stop)} .dd .yes h5{color:var(--go)}
+  .dd pre{font-size:.75rem;border-left-width:3px;padding:.7rem .8rem}
+  .dd .no pre{border-left-color:var(--stop)} .dd .yes pre{border-left-color:var(--go)}
+  .dd p{font-size:.82rem;margin:.5rem 0 0}
+  @media (max-width:720px){.dd{grid-template-columns:1fr}}
+
+  .check{list-style:none;padding:0;margin:1rem 0 1.4rem;font-size:.91rem}
+  .check li{display:grid;grid-template-columns:1.5rem 1fr;padding:.4rem 0;border-bottom:1px solid var(--rule)}
+  .check li::before{content:"\2610";font-family:var(--f-mono);color:var(--steel)}
+
+  .tree{background:var(--paper-3);border:1px solid var(--rule);padding:.9rem 1.1rem;font-family:var(--f-mono);font-size:.79rem;line-height:1.75;overflow-x:auto;margin:1rem 0 1.4rem;white-space:pre}
+
+  footer{margin:4rem 2.5rem 0;padding:1.4rem 0 0;border-top:3px solid var(--ink);max-width:var(--measure);font-size:.84rem;color:var(--steel)}
+
+  @media (max-width:960px){
+    .shell{grid-template-columns:1fr}
+    .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);padding:1.5rem}
+    section,footer{padding-left:1.35rem;padding-right:1.35rem}
+    .plate{padding:2rem 1.35rem 1.5rem}
+    .specs div{border-right:0;border-bottom:1px solid #2C333B}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<aside class="rail">
+  <p class="rail-title">Multi-Brand EDS<br>Setup Manual</p>
+  <p class="rail-sub">Adobe Edge Delivery Services<br>Version 1.0</p>
+  <nav aria-label="Contents">
+    <h3>ORIENTATION</h3>
+    <ol>
+      <li><a href="#model"><span class="n">01</span><span>How the model works</span></a></li>
+      <li><a href="#prereq"><span class="n">02</span><span>Before you start</span></a></li>
+    </ol>
+    <h3>PART 1 · PROJECT</h3>
+    <ol>
+      <li><a href="#create"><span class="n">03</span><span>Create the project</span></a></li>
+      <li><a href="#brandlayer"><span class="n">04</span><span>Wire the brand layer</span></a></li>
+    </ol>
+    <h3>PART 2 · SKILLS</h3>
+    <ol>
+      <li><a href="#skills-install"><span class="n">05</span><span>Install the skills</span></a></li>
+      <li><a href="#skills-enforce"><span class="n">06</span><span>Make them stick</span></a></li>
+    </ol>
+    <h3>PART 3 · QUALITY GATES</h3>
+    <ol>
+      <li><a href="#gates"><span class="n">07</span><span>Install the quality gates</span></a></li>
+    </ol>
+    <h3>PART 4 · BRANDS</h3>
+    <ol>
+      <li><a href="#onboard"><span class="n">08</span><span>Onboard a brand</span></a></li>
+      <li><a href="#signoff"><span class="n">09</span><span>Verify and sign off</span></a></li>
+    </ol>
+    <h3>PART 5 · AGENT</h3>
+    <ol>
+      <li><a href="#agent"><span class="n">10</span><span>Running this with Claude Code</span></a></li>
+    </ol>
+    <h3>REFERENCE</h3>
+    <ol>
+      <li><a href="#ladder"><span class="n">11</span><span>The Divergence Ladder</span></a></li>
+      <li><a href="#tokens"><span class="n">12</span><span>Design tokens</span></a></li>
+      <li><a href="#standards"><span class="n">13</span><span>Standards &amp; budgets</span></a></li>
+      <li><a href="#commands"><span class="n">14</span><span>Command reference</span></a></li>
+      <li><a href="#trouble"><span class="n">15</span><span>Troubleshooting</span></a></li>
+      <li><a href="#glossary"><span class="n">16</span><span>Glossary</span></a></li>
+    </ol>
+  </nav>
+</aside>
+
+<main>
+
+<header class="plate">
+  <p class="stamp">INSTALLATION &amp; COMMISSIONING · ADOBE EDGE DELIVERY SERVICES</p>
+  <h1>One repository. Any number of brands.</h1>
+  <p>A complete procedure for standing up a multi-brand Edge Delivery Services project: the
+     repository, the brand layer, the quality gates, the agent skills, and the first brand.
+     Follow it in order. Every step ends with something you can check.</p>
+  <dl class="specs">
+    <div><dt>Part 1 · Project</dt><dd>~90 min<small>Repository through brand layer</small></dd></div>
+    <div><dt>Part 2 · Skills</dt><dd>~30 min<small>Installed, enforced, pinned</small></dd></div>
+    <div><dt>Part 3 · Gates</dt><dd>~30 min<small>CI, lint, tokens wired</small></dd></div>
+    <div><dt>Part 4 · Brand</dt><dd>~1 day<small>Registered through to preview</small></dd></div>
+    <div><dt>Each brand after</dt><dd>1 cmd<small>Zero shared JavaScript modified</small></dd></div>
+  </dl>
+</header>
+
+<section id="model">
+  <h2>How the model works</h2>
+  <p class="kicker">Read this first — the procedures assume it</p>
+
+  <p class="lede">Several brands share one codebase. Something needs to look or behave
+     differently. The instinct is to copy the block and change it. Do that twenty-five times
+     across three brands and you maintain seventy-five implementations, where every
+     accessibility fix is applied three times and the third one is forgotten.</p>
+
+  <p>So the platform is built around one question, asked before any code is written:
+     <strong>can this difference be expressed as data instead?</strong> Different content,
+     different token values, a variant class, or a capability flag. Only when all four genuinely
+     fail is a second copy of the code written, and then it is written down and reviewed like
+     the liability it is.</p>
+
+  <div class="layers">
+    <div class="layer"><div class="layer-tag">L4 · BRAND</div><div class="layer-body"><b>Changes per brand</b>
+      Tokens, content, icons, fonts, one registry entry. No JavaScript. The only layer a new brand touches.</div></div>
+    <div class="layer"><div class="layer-tag">L3 · BLOCKS</div><div class="layer-body"><b>Shared experience</b>
+      Brand-agnostic by default, configuration-aware. Reads the brand through the platform, never by inspecting the URL.</div></div>
+    <div class="layer"><div class="layer-tag">L2 · PLATFORM</div><div class="layer-body"><b>Bootstrap</b>
+      <code>scripts.js</code>, <code>brand.js</code>, shared utilities. Knows about brands so blocks do not have to.</div></div>
+    <div class="layer"><div class="layer-tag">L1 · CORE</div><div class="layer-body"><b>Never modified</b>
+      <code>aem.js</code> and the EDS pipeline. Upstream code — extend in <code>scripts/lib/</code>.</div></div>
+  </div>
+
+  <p><strong>Dependencies point downward only.</strong> Blocks reach the brand layer through CSS
+     custom properties and a configuration object. A block that imports a brand file, or tests a
+     brand name inline, has broken the model.</p>
+
+  <div class="note key">
+    <b>The number that matters</b>
+    <p>The <strong>fork ratio</strong> is the share of blocks existing in more than one
+       brand-specific copy. Target under 15%; over 20% triggers an architecture review rather
+       than an approval. CI reports it on every pull request. It is the single metric that
+       predicts whether the next brand takes a week or a quarter, and it only ever moves in the
+       wrong direction quietly.</p>
+  </div>
+</section>
+
+<section id="prereq">
+  <h2>Before you start</h2>
+  <p class="kicker">Accounts, access, and tools</p>
+
+  <h3>Access you need</h3>
+  <table>
+    <thead><tr><th style="width:32%">Thing</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>GitHub organisation, admin on a new repository</td><td>The repository is the deployment mechanism</td></tr>
+      <tr><td>Permission to install a GitHub App</td><td>AEM Code Sync publishes commits to the delivery network</td></tr>
+      <tr><td>A content source</td><td>Document Authoring, SharePoint, Google Drive, or AEM authoring</td></tr>
+      <tr><td>Your Adobe user mapped as admin on the GitHub org</td><td>The Configuration Service will not accept changes without it</td></tr>
+      <tr><td>Brand design tokens, per brand</td><td>Colour, type, spacing, radius, elevation values</td></tr>
+      <tr><td>Web font licences, per brand</td><td>woff2 files you are permitted to self-host</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Local tooling</h3>
+  <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>node --version              # 20 or later
+npm install -g @adobe/aem-cli
+aem --version</code></pre></div>
+
+  <p>Install these too. Coding agents are trained on them and will reach for them; without them
+     an agent falls back to slower, noisier alternatives.</p>
+  <div class="code"><button class="copy" type="button">copy</button>
+<pre><code># macOS
+brew install ripgrep jq gh fd bat ast-grep
+
+# Debian / Ubuntu
+sudo apt install ripgrep jq gh fd-find bat</code></pre></div>
+
+  <div class="note warn">
+    <b>One habit that saves hours</b>
+    <p>When asking any AI agent about Edge Delivery Services, tell it to <strong>search
+       www.aem.live</strong>. Unconstrained, "EDS" returns Ehlers-Danlos syndrome or CDN
+       edge-compute products from other vendors, and "AEM" returns the Java/JCR/OSGi stack, which
+       is a completely different product. Adobe publishes
+       <code>https://www.aem.live/llms.txt</code> as an AI-oriented index of the documentation.
+       Step 13 puts this instruction in the repository so every agent picks it up automatically.</p>
+  </div>
+
+  <div class="note">
+    <b>Driving this with an agent?</b>
+    <p>Every step in Parts 1–3 can be executed by Claude Code, apart from four things that
+       need a browser, an account, or a design system. If that is how you plan to work, read
+       <a href="#agent">Running this with Claude Code</a> first — the order in which you copy
+       files matters — then come back here and follow the manual as written.</p>
+  </div>
+</section>
+
+<section id="create">
+  <h2>Part 1 · Create the project</h2>
+  <p class="kicker">Steps 1–6 · from empty to a site rendering locally</p>
+
+  <ol class="steps">
+    <li><div>
+      <h4>Create the repository from the boilerplate</h4>
+      <p>Start from Adobe's boilerplate rather than an empty repository. It ships the block
+         collection, lint configuration, the loading-phase scaffolding, and an
+         <code>AGENTS.md</code> you will extend in step 13.</p>
+      <p>Open <a href="https://github.com/adobe/aem-boilerplate">github.com/adobe/aem-boilerplate</a>
+         and choose <strong>Use this template</strong>. If your content will live in Document
+         Authoring, use the DA-compatible variant, <code>aemsites/da-block-collection</code>.</p>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>git clone https://github.com/YOUR-ORG/YOUR-PROJECT.git
+cd YOUR-PROJECT
+npm install</code></pre></div>
+      <div class="verify"><b>CHECK</b><p><code>blocks/</code>, <code>scripts/aem.js</code>,
+        <code>styles/styles.css</code> and <code>head.html</code> all exist.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Install AEM Code Sync</h4>
+      <p>This GitHub App watches the repository and publishes each commit. Without it nothing
+         you push reaches a preview URL.</p>
+      <p>Install <a href="https://github.com/apps/aem-code-sync">github.com/apps/aem-code-sync</a>
+         and grant it access to the new repository.</p>
+      <div class="verify"><b>CHECK</b><p>The App appears under the repository's
+        <em>Settings → GitHub Apps</em>, and a commit to <code>main</code> shows a check run.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Connect the content source</h4>
+      <p>Content lives outside the repository, and the binding between the two is held in the
+         <strong>Configuration Service</strong>. On current projects there is no
+         <code>fstab.yaml</code>: configuration is site-level rather than repository-level, and it
+         is managed through a user interface or an API.</p>
+      <p>The AEM Code Sync bot creates an initial configuration when you install it. To set or
+         change the content source, use the site admin tool at
+         <a href="https://tools.aem.live">tools.aem.live</a>, which is the right option for almost
+         everything. The service is API-first, so the same thing can be scripted:</p>
+      <div class="code"><span class="filename">Configuration Service — set the content source</span><button class="copy" type="button">copy</button>
+<pre><code>curl -X POST https://admin.hlx.page/config/YOUR-ORG/sites/YOUR-SITE.json \
+  -H 'content-type: application/json' \
+  -H 'x-auth-token: &lt;your-auth-token&gt;' \
+  --data '{
+    "version": 1,
+    "code":    { "owner": "YOUR-ORG", "repo": "YOUR-PROJECT" },
+    "content": { "source": { "url": "&lt;content-source-url&gt;" } }
+  }'</code></pre></div>
+      <p>Your Adobe user has to be mapped as an admin on the GitHub organisation before the
+         service will accept changes. Sort that out first — it is the step that most often blocks
+         a morning.</p>
+
+      <div class="note key">
+        <b>Two ways to lay out several brands — decide now</b>
+        <p><strong>One site, path prefixes.</strong> <code>/alpha/</code>, <code>/beta/</code>
+           under a single site. Brand stays visible in preview URLs, local development, analytics,
+           and the sidekick, with no per-environment DNS work, and production hostnames map onto
+           the prefixes at the CDN. Simplest operationally, and what the rest of this manual
+           assumes.</p>
+        <p><strong>Repoless: one code repository, one site per brand.</strong> Because
+           configuration is no longer tied to the repository, the same code can drive several
+           sites, each with its own content source, hostname, and configuration. Cleaner
+           separation and independent publishing per brand, at the cost of managing N site
+           configurations instead of one.</p>
+        <p>Both work with everything in this framework; only brand <em>resolution</em> differs.
+           With path prefixes, the path match does the work. With repoless, set
+           <code>pathPrefix</code> to <code>"/"</code> for each brand and let the
+           <code>theme</code> metadata and the hostname entries resolve it — which is why the
+           resolution order in step 10 covers all three.</p>
+        <p>Choose before any content exists. Changing later means redirecting every URL.</p>
+      </div>
+
+      <div class="note">
+        <b>Inheriting an older project</b>
+        <p>Sites created before the Configuration Service still carry <code>fstab.yaml</code> and
+           <code>.helix/config.xlsx</code>. Those remain supported but are not receiving further
+           investment, and <code>fstab.yaml</code> permits only one mountpoint — a hard limit for
+           multi-brand work. Migrate to the Configuration Service and delete the legacy files
+           rather than running both. Query index configuration moves the same way, out of
+           <code>helix-query.yaml</code> and into the service.</p>
+      </div>
+      <div class="verify"><b>CHECK</b><p>A test document in the content source previews at its
+        <code>.aem.page</code> URL, and the site configuration at <code>tools.aem.live</code>
+        shows the content source you expect.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Run the site locally</h4>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>aem up          # serves on http://localhost:3000 against your content source</code></pre></div>
+      <div class="verify"><b>CHECK</b><p>The page renders at <code>localhost:3000</code> and edits
+        to files under <code>blocks/</code> appear on reload.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Confirm the linters run clean</h4>
+      <p>The boilerplate ships ESLint (Airbnb base) and Stylelint. Get to zero warnings now,
+         while the repository is empty, so the first real change is not competing with
+         pre-existing noise.</p>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>npm run lint</code></pre></div>
+      <div class="verify"><b>CHECK</b><p>Exit code 0, no warnings.</p></div>
+    </div></li>
+  </ol>
+
+  <div class="note key">
+    <b>Or run the mechanical half of this manual as one command</b>
+    <p><code>eds-platform-marketplace</code>'s <code>scripts/bootstrap.mjs</code> writes the
+       files that steps 6, 7, 8, 14, 15, 19, and 20 describe. It's a plain Node script, not an
+       agent — no judgment, no guessing, just the same file contents this manual shows you,
+       written for you. Everything else in this manual still applies: read it once even if you
+       run the script, because it tells you exactly what got written and why, and the steps it
+       can't do (9–13, 16–18, Parts 4–5) are still yours.</p>
+    <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>git clone https://github.com/naveenkambam-codeandtheory/eds-platform-marketplace /tmp/eds-platform
+node /tmp/eds-platform/scripts/bootstrap.mjs --dry-run \
+  --brand-key driv --brand-name DRiV \
+  --topology repoless --hosts main--driv--your-org.aem.page,main--driv--your-org.aem.live</code></pre></div>
+    <p>Drop <code>--dry-run</code> once the output looks right. It's safe to run more than
+       once — existing files are left alone unless you pass <code>--force</code>, and an
+       existing <code>.husky/pre-commit</code> gets these gate lines added above its own
+       content, not replaced. Run it with <code>--help</code> for every flag.</p>
+
+    <table>
+      <thead><tr><th>Step</th><th>What the script actually does</th><th>Still yours to do</th></tr></thead>
+      <tbody>
+        <tr><td>6 · project's shape</td>
+            <td>Writes <code>platform.json</code> — the exact <code>conventions</code>/<code>budgets</code>
+                shown below, every project.</td>
+            <td>Nothing — this file is genuinely generic.</td></tr>
+        <tr><td>7 · brand registry</td>
+            <td>Writes <code>brands.json</code> from <code>--brand-key</code>/<code>--brand-name</code>/
+                <code>--topology</code> and either <code>--path-prefix</code> or
+                <code>--hosts</code>.</td>
+            <td>The real path prefix or hostnames — the script only records what you tell it.</td></tr>
+        <tr><td>8 · token contract</td>
+            <td>Writes <code>styles/tokens/contract.json</code> — the baseline set of names
+                shown below.</td>
+            <td>Verifying it against the brand's real design, and splitting a name in two where
+                step 8's note above applies.</td></tr>
+        <tr><td>9–13 · brand file,<br>resolution, AGENTS.md</td>
+            <td><em>Not covered.</em> A brand's real colours/fonts/sizes, the edit to an
+                existing <code>loadEager</code>, and a project-specific AGENTS.md all need
+                context the script doesn't have.</td>
+            <td>All of it — same as without the script.</td></tr>
+        <tr><td>14 · project skills</td>
+            <td>Copies all four skill folders into <code>.claude/skills/</code>, verbatim from
+                this repo.</td>
+            <td>Nothing.</td></tr>
+        <tr><td>15 · marketplaces</td>
+            <td>Writes <code>.claude/settings.json</code> registering both.</td>
+            <td>The actual <code>/plugin marketplace add</code> / <code>/plugin install</code> —
+                that part is interactive, no script can do it for you.</td></tr>
+        <tr><td>16–18 · your own<br>marketplace, pinning</td>
+            <td><em>Not covered.</em> Publishing a new repository and pinning skills you've now
+                inspected are deliberate, one-at-a-time actions.</td>
+            <td>All of it.</td></tr>
+        <tr><td>19 · validation scripts</td>
+            <td>Copies <code>validate-tokens.mjs</code>, <code>validate-skills.mjs</code>,
+                <code>onboard-brand.mjs</code>, and <code>docs/Multi-Brand-EDS-Framework.md</code>.</td>
+            <td>Nothing — these are generic by design (they read <code>platform.json</code>).</td></tr>
+        <tr><td>20 · CI, pre-commit</td>
+            <td>Writes a topology-aware <code>.github/workflows/quality-gates.yml</code>
+                (repoless gets a per-brand <code>preview_host</code>, not a path suffix) and
+                adds the gate lines to <code>.husky/pre-commit</code>.</td>
+            <td>A second repoless brand's own <code>include</code> entry — the script only knows
+                about the one brand you gave it.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ol class="steps" style="counter-reset:st 5">
+    <li><div>
+      <h4>Describe the project's shape</h4>
+      <p><code>platform.json</code> tells every script in this framework what actually varies for
+         this project. The scripts default to the standard boilerplate layout &#8212;
+         <code>blocks/</code>, <code>styles/brands/</code>, <code>brands.json</code>,
+         <code>icons/</code>, <code>fonts/</code>, and the rest &#8212; without needing it spelled
+         out here, so this file captures only the two things that are genuinely policy:
+         conventions and budgets.</p>
+      <div class="code"><span class="filename">platform.json</span><button class="copy" type="button">copy</button>
+<pre><code>{
+  "platform": "aem-eds",
+  "conventions": {
+    "forkPrefix":       "{brandKey}-",
+    "brandAttribute":   "data-brand",
+    "allowedLiteralColors": ["#fff", "#000"]
+  },
+  "budgets": { "forkRatioTarget": 15, "forkRatioMax": 20, "brandTokenFileKb": 8 }
+}</code></pre></div>
+      <details class="why">
+        <summary>Why this file?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> a small config file that this framework's own scripts
+             (<code>validate-tokens.mjs</code>, <code>validate-skills.mjs</code>,
+             <code>onboard-brand.mjs</code>) read instead of hardcoding this project's naming
+             rules and budgets.</p>
+          <p><strong>Why you need it:</strong> without it, every script would carry its own
+             assumptions about what a forked block is named, what attribute brand styling hangs
+             off, which literal colours are allowed, and what the fork-ratio and token-file-size
+             limits are. One file means one place to change any of that — and the same scripts
+             run unchanged on the next multi-brand project.</p>
+          <p><strong>Fields:</strong></p>
+          <ul>
+            <li><code>platform</code> — a fixed identifier (<code>"aem-eds"</code>) scripts can
+                branch on if this framework is ever ported to another platform.</li>
+            <li><code>conventions.forkPrefix</code> — the directory-naming pattern
+                (<code>{brandKey}-</code>) that marks a block as an L4 fork, so tooling can tell a
+                fork from a shared block by name alone.</li>
+            <li><code>conventions.brandAttribute</code> — the DOM attribute
+                (<code>data-brand</code>) that carries the resolved brand key; CSS and scripts key
+                off it instead of a hardcoded selector.</li>
+            <li><code>conventions.allowedLiteralColors</code> — the short allow-list of literal
+                colour values (<code>#fff</code>, <code>#000</code>) exempt from the
+                no-hardcoded-colours lint rule, because true black/white are structural, not
+                brand.</li>
+            <li><code>budgets.forkRatioTarget</code> — the fork ratio (%) CI treats as healthy.</li>
+            <li><code>budgets.forkRatioMax</code> — the fork ratio (%) that fails CI outright.</li>
+            <li><code>budgets.brandTokenFileKb</code> — the maximum size, in KB, of a single
+                brand's token file before the validator flags it as carrying more than tokens.</li>
+          </ul>
+        </div>
+      </details>
+      <div class="note">
+        <b>Why there is no <code>paths</code> block</b>
+        <p>A companion critique of this framework flags a <code>paths</code> block here as
+           speculative generality: every boilerplate-derived EDS repository has this exact
+           layout, so the scripts already default correctly without it &#8212; verified, not
+           assumed. <code>conventions</code> and <code>budgets</code> stay, because those are
+           policy and do get argued about.</p>
+        <p>Add a <code>paths</code> block later, scoped to only the entries that actually differ,
+           the day a project's layout genuinely diverges from the boilerplate default. Until
+           then it is nine lines that will be copy-pasted identically forever.</p>
+      </div>
+      <div class="verify"><b>CHECK</b><p><code>node -e "JSON.parse(require('fs').readFileSync('platform.json'))"</code>
+        exits without error.</p></div>
+    </div></li>
+  </ol>
+</section>
+
+<section id="brandlayer">
+  <h2>Part 1 · Wire the brand layer</h2>
+  <p class="kicker">Steps 7–12 · the machinery that makes brands data</p>
+
+  <ol class="steps" style="counter-reset:st 6">
+    <li><div>
+      <h4>Create the brand registry</h4>
+      <p><code>brands.json</code> is the only place a brand is declared. Everything else reads
+         from it. Start with one brand; the onboarding command adds the rest.</p>
+      <div class="code"><span class="filename">brands.json</span><button class="copy" type="button">copy</button>
+<pre><code>{
+  "default": "alpha",
+  "brands": {
+    "alpha": {
+      "key":        "alpha",
+      "name":       "Alpha",
+      "pathPrefix": "/alpha",
+      "hosts":      ["alpha.example.com"],
+      "locales":    ["en-us"],
+      "indexPath":  "/alpha/query-index.json",
+      "features":   { "commerce": false, "storeLocator": true },
+      "endpoints":  { "catalog": "/api/alpha/catalog" }
+    }
+  }
+}</code></pre></div>
+      <details class="why">
+        <summary>Why this file?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> the single registry where every brand this codebase
+             serves is declared — key, path prefix, hostnames, locales, capability flags, API
+             endpoints.</p>
+          <p><strong>Why you need it:</strong> <code>brand.js</code> imports it directly (no
+             network fetch) to resolve which brand a page belongs to before first paint, and it's
+             what turns onboarding a new brand into "add one object here" instead of hunting down
+             every place a brand name is hardcoded across scripts and blocks.</p>
+          <p><strong>Fields</strong> (per brand):</p>
+          <ul>
+            <li><code>key</code> — the lowercase, hyphen-free identifier used everywhere: file
+                names, the <code>data-brand</code> attribute, directory names, content
+                metadata.</li>
+            <li><code>name</code> — the human-readable brand name, for display and tooling output
+                only.</li>
+            <li><code>pathPrefix</code> — the URL prefix this brand's content lives under
+                (<code>"/alpha"</code>), or <code>"/"</code> on a repoless, one-site-per-brand
+                setup.</li>
+            <li><code>hosts</code> — production hostnames matched when path resolution doesn't
+                apply — the main signal on a repoless setup.</li>
+            <li><code>locales</code> — the brand's locale(s); the first entry sets
+                <code>&lt;html lang&gt;</code>.</li>
+            <li><code>indexPath</code> — where this brand's generated
+                <code>query-index.json</code> lives, so listing/search blocks never read another
+                brand's content.</li>
+            <li><code>features</code> — capability flags (<code>commerce</code>,
+                <code>storeLocator</code>) blocks branch on instead of a brand name.</li>
+            <li><code>endpoints</code> — this brand's API base paths, so a block calls a name from
+                the registry instead of a hardcoded URL.</li>
+          </ul>
+        </div>
+      </details>
+      <p>Brand keys are <strong>lowercase alphanumeric, no hyphens</strong>, and are used
+         verbatim everywhere: file names, the <code>data-brand</code> attribute, directory names,
+         and content metadata. An inconsistent key is the most common cause of a token file that
+         silently never loads.</p>
+      <p>On a repoless setup where each brand is its own site, set <code>pathPrefix</code> to
+         <code>"/"</code> and make sure <code>hosts</code> is populated — resolution then falls to
+         the <code>theme</code> metadata and the hostname rather than the path.</p>
+      <p><strong>Features are capabilities, never brand names.</strong> <code>commerce</code> and
+         <code>storeLocator</code> are correct; <code>isAlpha</code> is not. This is what lets a
+         future brand opt in through this file alone.</p>
+    </div></li>
+
+    <li><div>
+      <h4>Define the token contract</h4>
+      <p>The contract is the fixed set of semantic token names <em>every</em> brand must define.
+         CI fails when one is missing, which prevents the worst failure mode in multi-brand
+         theming: a new brand silently inheriting another brand's colours because a variable fell
+         through.</p>
+      <div class="code"><span class="filename">styles/tokens/contract.json</span><button class="copy" type="button">copy</button>
+<pre><code>{
+  "version": 1,
+  "tokens": {
+    "colour": ["--color-accent","--color-accent-hover","--color-accent-contrast",
+               "--color-text","--color-text-muted","--color-text-inverse",
+               "--color-surface","--color-surface-raised","--color-surface-inverse",
+               "--color-border","--color-focus","--color-danger","--color-success"],
+    "type":   ["--font-heading","--font-body","--font-mono",
+               "--font-size-xs","--font-size-s","--font-size-m","--font-size-l",
+               "--font-size-xl","--font-size-2xl","--font-size-3xl",
+               "--line-height-tight","--line-height-base","--line-height-loose"],
+    "space":  ["--space-1","--space-2","--space-3","--space-4","--space-6",
+               "--space-8","--space-12","--space-16","--space-section","--space-gutter"],
+    "shape":  ["--radius-none","--radius-s","--radius-m","--radius-l","--radius-full",
+               "--shadow-s","--shadow-m","--shadow-l"],
+    "layout": ["--layout-max-width","--layout-content-width"],
+    "motion": ["--duration-fast","--duration-base","--duration-slow","--easing-standard"],
+    "brand":  ["--brand-logo","--brand-logo-inverse","--brand-favicon"]
+  }
+}</code></pre></div>
+      <details class="why">
+        <summary>Why this file?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> the fixed list of semantic token names — colour, type,
+             space, shape, layout, motion, brand — that every brand's CSS file must define a real
+             value for.</p>
+          <p><strong>Why you need it:</strong> without a contract, a brand file missing a token
+             silently inherits whichever other brand's stylesheet happened to load first — a
+             wrong colour that surfaces on one page, weeks later, in production. CI treats a
+             missing or stubbed token as a build failure specifically to catch this before it
+             ships, instead of trusting every brand file to be complete by inspection.</p>
+          <p><strong>Fields:</strong></p>
+          <ul>
+            <li><code>version</code> — bump when the contract's shape changes, so tooling can
+                detect a stale copy.</li>
+            <li><code>tokens.colour</code> — every colour role a brand must supply: accent, text,
+                surface, border, focus, danger/success states.</li>
+            <li><code>tokens.type</code> — typefaces, the mono stack, and the full type scale
+                (sizes and line-heights).</li>
+            <li><code>tokens.space</code> — the spacing scale, plus section and gutter
+                spacing.</li>
+            <li><code>tokens.shape</code> — corner radii and elevation (shadow) steps.</li>
+            <li><code>tokens.layout</code> — max content width and content width.</li>
+            <li><code>tokens.motion</code> — animation durations and easing.</li>
+            <li><code>tokens.brand</code> — brand-identity assets: logo, inverse logo,
+                favicon.</li>
+          </ul>
+        </div>
+      </details>
+      <p>Adjust the names to your design system, but keep them <strong>role-based</strong> rather
+         than brand-prefixed. In a multi-brand system every token is brand-scoped by definition,
+         so <code>--brand-primary</code> says nothing that <code>--color-accent</code> does not —
+         and a name describing what a token <em>does</em> survives a rebrand, while a name
+         describing what it <em>is</em> does not.</p>
+      <div class="note warn">
+        <b>Adding a token later is a breaking change</b>
+        <p>Every brand must supply a value. Adding one ships in a single commit that also fills it
+           for every existing brand. Renaming is worse than adding: add the new name, migrate
+           usages, remove the old one in a later release, so no brand breaks mid-flight.</p>
+      </div>
+      <div class="note">
+        <b>One name, two real roles — split it, don't force it</b>
+        <p>A baseline contract is a starting guess. Real brand data sometimes shows that one
+           assumed token is actually two distinct roles wearing the same name — a brand using a
+           muted colour for plain text links and a completely different, bolder colour for CTA
+           buttons and heading emphasis is not "one accent colour," it's <code>--color-accent</code>
+           and a separate <code>--color-link</code>. The same thing happens with type: a brand
+           whose body text is one flat size at every viewport, but whose headings resize
+           independently at each of six levels, can't share a single <code>--font-size-m</code>
+           between "the size of this paragraph" and "the size of this heading" — the two need
+           their own names (e.g. <code>--font-size-m</code> for flat body/UI copy,
+           <code>--font-size-heading-m</code> for the responsive heading scale).</p>
+        <p>The tell is a token whose real value depends on <em>which caller is asking</em>. When
+           that happens, verify against the actual design (production computed styles beat a
+           guess every time) before deciding the split — and add the second name to every
+           existing brand's file in the same commit, same as any other contract addition.</p>
+      </div>
+    </div></li>
+
+    <li><div>
+      <h4>Write the first brand token file</h4>
+      <p>Custom property definitions <strong>only</strong>. No element or class selectors, no
+         layout rules, no component styling. A brand file containing <code>.cards { … }</code> is
+         a fork wearing a token file's clothes, and the validator rejects it.</p>
+      <div class="code"><span class="filename">styles/brands/alpha.css</span><button class="copy" type="button">copy</button>
+<pre><code>:root[data-brand='alpha'] {
+  /* private primitives — brand-internal, not part of the contract */
+  --alpha-blue-600: #0B5FFF;
+  --alpha-blue-700: #0847C4;
+
+  /* the contract */
+  --color-accent:          var(--alpha-blue-600);
+  --color-accent-hover:    var(--alpha-blue-700);
+  --color-accent-contrast: #fff;
+  --font-heading: 'Alpha Display', system-ui, sans-serif;
+  --font-body:    'Alpha Text', system-ui, sans-serif;
+  --radius-m: 4px;
+  --layout-max-width: 1280px;
+  --brand-logo: url('/icons/alpha/logo.svg');
+  /* …every remaining contract token… */
+
+  /* optional component-level overrides */
+  --header-height: 72px;
+}
+
+@font-face {
+  font-family: 'Alpha Display';
+  src: url('/fonts/alpha/display.woff2') format('woff2');
+  font-display: swap;
+  size-adjust: 100%;      /* match fallback metrics so swapping does not shift layout */
+}</code></pre></div>
+      <details class="why">
+        <summary>Why this file?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> one brand's actual token values — custom property
+             declarations only, no selector beyond <code>:root[data-brand='&lt;key&gt;']</code>
+             and <code>@font-face</code>.</p>
+          <p><strong>Why you need it:</strong> this is where a brand's colours, type, spacing,
+             and logo actually live, and it's the mechanism the whole framework is built around —
+             most differences between brands should be solvable here, or with a component-token
+             override, instead of by forking a block's code.</p>
+          <p><strong>What's inside:</strong></p>
+          <ul>
+            <li>private primitives — brand-internal raw values (e.g.
+                <code>--alpha-blue-600</code>) that exist only to be referenced below; nothing
+                outside this file should use them directly.</li>
+            <li>the contract — every token name <code>contract.json</code> requires, given this
+                brand's real value.</li>
+            <li>component-level overrides (optional) — a token scoped to one component
+                (<code>--header-height</code>), for the rare case a semantic token alone doesn't
+                cover a brand difference.</li>
+            <li><code>@font-face</code> — this brand's web fonts, with
+                <code>font-display: swap</code> and a matched <code>size-adjust</code> to avoid
+                layout shift on swap.</li>
+          </ul>
+        </div>
+      </details>
+      <div class="note">
+        <b>Component-level tokens cover style choices too, not just values</b>
+        <p>The obvious component-level override is a size (<code>--header-height</code> above).
+           Less obvious, but just as real: a brand's structural style <em>choices</em> — headings
+           uppercase or not, bold or not; buttons square or pill-shaped — belong here as tokens
+           too, not as hardcoded rules in the shared CSS that reads them. A shared file writing
+           <code>text-transform: uppercase</code> directly has baked one brand's identity into
+           every brand's headings; writing <code>text-transform: var(--heading-transform)</code>
+           and letting each brand's file supply <code>uppercase</code> or <code>none</code> keeps
+           the shared file actually brand-agnostic. These aren't required contract entries —
+           they default per brand, the same as any other component-level token:</p>
+        <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>/* in styles/brands/alpha.css */
+--heading-weight:    700;
+--heading-transform: uppercase;
+--button-radius:     var(--radius-none);   /* square CTAs, not the shared pill default */
+--button-transform:  uppercase;</code></pre></div>
+        <p>Then <code>styles.css</code> reads <code>font-weight: var(--heading-weight)</code> and
+           <code>border-radius: var(--button-radius)</code> — never the literal — so a second
+           brand can choose lowercase, normal-weight, pill-shaped buttons without a single edit
+           to shared code.</p>
+      </div>
+      <div class="verify"><b>CHECK</b><p>The file is under 8 KB and contains no selector other
+        than <code>:root[data-brand='alpha']</code> and <code>@font-face</code>.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Add brand resolution</h4>
+      <p>This runs before first paint, so it must be synchronous, allocation-light, and incapable
+         of throwing. Precedence is <strong>metadata → path → host → default</strong>.</p>
+      <p>Metadata comes first deliberately: it lets content teams stand up a brand section with no
+         deploy, and it costs zero extra requests because it ships inside the served HTML. Path
+         and host are the safety net.</p>
+      <div class="code"><span class="filename">scripts/brand.js</span><button class="copy" type="button">copy</button>
+<pre><code>import { getMetadata } from './aem.js';
+
+// The registry is imported, not fetched. A fetch here costs a round trip before
+// the brand stylesheet can even be requested, and a second before first paint -
+// roughly 300 ms of LCP on a mid-tier mobile connection, on every page, for
+// every brand. Generate this file from brands.json at commit time, or keep the
+// two in sync with a CI check.
+import REGISTRY from './brands.js';
+
+let resolved;
+
+const matchByPath = (p) => Object.values(REGISTRY.brands)
+  .find((b) => b.pathPrefix !== '/' && (p === b.pathPrefix || p.startsWith(`${b.pathPrefix}/`)));
+
+const matchByHost = (h) => Object.values(REGISTRY.brands)
+  .find((b) => (b.hosts || []).includes(h));
+
+export function getBrand() {
+  if (resolved) return resolved;
+  resolved = REGISTRY.brands[getMetadata('theme')]
+    ?? matchByPath(window.location.pathname)
+    ?? matchByHost(window.location.hostname)
+    ?? REGISTRY.brands[REGISTRY.default];
+  return resolved;
+}
+
+export const getBrandConfig = () => getBrand();
+export const hasFeature = (f) => Boolean(getBrand().features?.[f]);</code></pre></div>
+
+      <details class="why">
+        <summary>Why this file?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> the module that resolves which brand the current page
+             belongs to, in order: page metadata, then path prefix, then hostname, then a
+             default.</p>
+          <p><strong>Why you need it:</strong> this runs before first paint, so it has to be
+             synchronous and incapable of throwing — it can't be scattered logic re-derived in
+             every block. It's the one place brand resolution lives; blocks call
+             <code>getBrand()</code>/<code>hasFeature()</code> instead of each reimplementing
+             "which brand am I" themselves.</p>
+          <p><strong>What each export does:</strong></p>
+          <ul>
+            <li><code>REGISTRY</code> — the brand registry, imported as a module (not fetched) so
+                resolution costs zero network round trips.</li>
+            <li><code>getBrand()</code> — resolves and caches the current brand: metadata → path
+                → host → default, in that order.</li>
+            <li><code>getBrandConfig()</code> — an alias for <code>getBrand()</code>, for call
+                sites that read better naming the config than the brand.</li>
+            <li><code>hasFeature(f)</code> — the capability check every block should branch on
+                instead of a brand name.</li>
+          </ul>
+        </div>
+      </details>
+
+      <div class="note key">
+        <b>Ship every brand&#39;s tokens in styles.css</b>
+        <p>The obvious design gives each brand its own stylesheet and loads it once the brand is
+           known. That serialises two requests before first paint, which is the opposite of what
+           this platform is for.</p>
+        <p>Token files are almost entirely custom property declarations, so they compress hard —
+           four brands is on the order of 2&#8211;3 KB over the wire. Concatenating all of them
+           into <code>styles.css</code> under <code>[data-brand]</code> selectors costs a few
+           unused kilobytes and saves a full round trip on every page. Below roughly ten brands
+           that trade is clearly worth it. Above it, or where brands differ by more than tokens,
+           switch to per-brand loading and accept the request.</p>
+        <p><strong>On a repoless setup, this isn't optional &#8212; it's the only option.</strong>
+           <code>head.html</code> is one file shared by every brand's site. A static
+           <code>&lt;link&gt;</code> naming one brand's stylesheet would ship to every other
+           brand's site too, which defeats the point. Per-brand loading, driven by
+           <code>getBrand()</code> inside <code>loadEager</code> (step 11), is what keeps each
+           site fetching only its own brand's CSS &#8212; concatenation has no equivalent here,
+           because there's no single shared stylesheet request to concatenate into that every
+           brand's site loads exactly once.</p>
+        <p>Keep the source files separate either way &#8212; <code>styles/brands/&lt;key&gt;.css</code>
+           is what the validator checks and what a brand team owns. Concatenation is a build-time
+           or commit-time concern, not an authoring one.</p>
+      </div>
+    </div></li>
+
+    <li><div>
+      <h4>Hook resolution into the eager phase</h4>
+      <p>The boilerplate keeps <code>body</code> hidden until <code>appear</code> is added.
+         Awaiting the brand token file there gives zero-flicker branding with no inline script in
+         <code>head.html</code> — which matters, because <code>head.html</code> is shared by every
+         brand and every byte in it is paid for on every page of every brand.</p>
+      <div class="code"><span class="filename">scripts/scripts.js — inside loadEager</span><button class="copy" type="button">copy</button>
+<pre><code>import { getBrand } from './brand.js';
+
+async function loadEager(doc) {
+  document.documentElement.lang = 'en';
+
+  // Synchronous: no fetch, no awaited stylesheet. Tokens for every brand are
+  // already in styles.css, which head.html loads. Setting the attribute is all
+  // that is needed to select them.
+  const brand = getBrand();
+  document.documentElement.dataset.brand = brand.key;
+  document.documentElement.lang = brand.locales[0];
+
+  decorateTemplateAndTheme();
+  const main = doc.querySelector('main');
+  if (main) {
+    decorateMain(main);
+    document.body.classList.add('appear');
+    await waitForFirstImage(main);
+  }
+}</code></pre></div>
+      <details class="why">
+        <summary>Why this file?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> not a new file — three lines added to the existing
+             <code>loadEager</code> function, setting <code>data-brand</code> on
+             <code>&lt;html&gt;</code> and the page's language before <code>appear</code> is
+             added.</p>
+          <p><strong>Why you need it:</strong> the boilerplate already hides <code>body</code>
+             until <code>appear</code> fires, so hooking in exactly here gives zero-flicker brand
+             styling with no extra request and no inline script in the shared
+             <code>head.html</code>, which every brand pays for on every page.</p>
+          <p><strong>What each line does:</strong></p>
+          <ul>
+            <li><code>getBrand()</code> — resolves the current brand once; the result is cached
+                for the rest of the page's life.</li>
+            <li><code>document.documentElement.dataset.brand = brand.key</code> — sets
+                <code>data-brand</code>, the attribute every brand-scoped CSS selector keys
+                off.</li>
+            <li><code>document.documentElement.lang = brand.locales[0]</code> — sets the page
+                language from the brand's own locale, not a hardcoded default.</li>
+          </ul>
+        </div>
+      </details>
+      <div class="verify"><b>CHECK</b><p>Load a page under the brand's prefix. In DevTools,
+        <code>&lt;html&gt;</code> carries <code>data-brand="alpha"</code>, the brand stylesheet is
+        in the network waterfall before first paint, and there is no flash of unstyled text.</p></div>
+
+      <div class="note">
+        <b>Repoless: load the brand's CSS at runtime instead</b>
+        <p>The version above assumes concatenation (step 10's note above explains why that's
+           the default). On a repoless setup it can't apply — there's no way to write one
+           <code>head.html</code> that loads a different stylesheet per site — so
+           <code>loadEager</code> fetches the brand's file itself, kicked off immediately and
+           awaited only once, right before content is revealed:</p>
+        <div class="code"><span class="filename">scripts/scripts.js — repoless variant</span><button class="copy" type="button">copy</button>
+<pre><code>const brand = getBrand();
+document.documentElement.dataset.brand = brand.key;
+document.documentElement.lang = brand.locales[0];
+const brandCSS = loadCSS(`${window.hlx.codeBasePath}/styles/brands/${brand.key}.css`)
+  .catch(() => console.error(`Could not load brand styles for "${brand.key}"`));
+
+decorateTemplateAndTheme();
+const main = doc.querySelector('main');
+if (main) {
+  decorateMain(main);
+  await brandCSS;
+  document.body.classList.add('appear');
+  await waitForFirstImage(main);
+}</code></pre></div>
+        <p>Started before <code>decorateMain</code> so it overlaps with DOM work instead of
+           adding to it; awaited right before <code>appear</code> so there's no flash of the
+           wrong brand's (or no brand's) styling; caught so a failed request doesn't leave the
+           page hidden forever. Each repoless site only ever resolves to its own brand, so this
+           never fetches another brand's CSS — <code>head.html</code> stays completely
+           brand-agnostic either way.</p>
+      </div>
+    </div></li>
+
+    <li><div>
+      <h4>Add per-brand indexes, sitemaps, and redirects</h4>
+      <p>Each brand gets its own index so blocks that list content never read another brand's
+         pages. Blocks take the path from the registry, never from a literal.</p>
+      <p>Where the index is <em>defined</em> depends on how the project is configured. On
+         Configuration Service projects, index definitions live in the service alongside the
+         content source, and are edited at <code>tools.aem.live</code> or through the admin API.
+         <code>helix-query.yaml</code> below is the file-based equivalent, still present on older
+         projects and useful as a reference for the shape of a definition.</p>
+      <div class="code"><span class="filename">helix-query.yaml</span><button class="copy" type="button">copy</button>
+<pre><code>version: 1
+indices:
+  alpha:
+    include: ['/alpha/**']
+    target: /alpha/query-index.json
+    properties:
+      title:
+        select: head > title
+        value: textContent(el)</code></pre></div>
+      <details class="why">
+        <summary>Why this file?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> a per-brand content index definition — which pages
+             belong to this brand's index, and where the generated
+             <code>query-index.json</code> lives.</p>
+          <p><strong>Why you need it:</strong> a shared block that lists or searches content
+             (a listing page, a search widget) reads from an index; without a per-brand index it
+             could surface another brand's pages. On Configuration Service projects the live
+             definition lives in the service itself — this file is the reference for the shape,
+             and still the real thing on older, file-based projects.</p>
+          <p><strong>Fields:</strong></p>
+          <ul>
+            <li><code>version</code> — the index config schema version.</li>
+            <li><code>indices.&lt;brand&gt;</code> — one entry per brand; the key is arbitrary but
+                conventionally the brand key.</li>
+            <li><code>include</code> — the path glob(s) this index scans.</li>
+            <li><code>target</code> — where the generated index is published.</li>
+            <li><code>properties</code> — the columns the index exposes, each with a CSS
+                <code>select</code>or and a <code>value</code> extractor.</li>
+          </ul>
+        </div>
+      </details>
+      <div class="verify"><b>CHECK</b><p><code>/alpha/query-index.json</code> returns rows after a
+        publish, and contains only that brand's pages.</p></div>
+    </div></li>
+  </ol>
+
+  <h3>What the repository looks like now</h3>
+  <div class="tree">blocks/                    components, named by capability, brand-agnostic
+scripts/
+  aem.js                   never modified
+  scripts.js               eager / lazy / delayed orchestration
+  brand.js                 resolution + config accessors
+  brands.js                the registry, imported by brand.js (generated from brands.json)
+  lib/                     shared utilities
+styles/
+  styles.css               semantic tokens only, no literals
+  tokens/contract.json     the required token names
+  brands/alpha.css         one file per brand
+icons/alpha/  fonts/alpha/
+brands.json                the brand registry
+platform.json              this project's shape
+helix-query.yaml  head.html  redirects.json
+component-definition.json  component-models.json  component-filters.json</div>
+
+  <div class="note warn">
+    <b>Check your lint config actually covers the new folders</b>
+    <p>The boilerplate's <code>lint:css</code> script is commonly scoped narrowly —
+       <code>stylelint 'blocks/**/*.css' 'styles/*.css'</code>, non-recursive on
+       <code>styles/</code>. That silently excludes everything just created:
+       <code>styles/tokens/</code> and <code>styles/brands/</code> sit one level deeper and never
+       get linted, which means <code>npm run lint</code> — and the CI job in step 20 that runs
+       it — passes clean while brand files carry real violations. Change the glob to
+       <code>'styles/**/*.css'</code> now, and confirm with a deliberate broken rule in a brand
+       file that <code>npm run lint</code> actually catches it.</p>
+  </div>
+</section>
+
+<section id="skills-install">
+  <h2>Part 2 · Install the skills</h2>
+  <p class="kicker">Steps 13–16 · giving agents the project's conventions</p>
+
+  <p>Agents start every session from scratch. Without guidance they make reasonable guesses that
+     miss: wrong DOM structures, skipped verification, content models that do not match your
+     patterns. Two layers of skills fix that, and they have distinct jobs.</p>
+
+  <table>
+    <thead><tr><th style="width:34%">Layer</th><th>Owns</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Adobe's official skills</strong><br><small><code>adobe/skills</code></small></td>
+          <td>How EDS works: block mechanics, the change workflow, content modelling, browser
+              testing, the block collection, docs search, EDS code review, the CLI</td></tr>
+      <tr><td><strong>Your <code>brand-*</code> skills</strong><br><small>this framework</small></td>
+          <td>How one repository serves several brands: the Divergence Ladder, the token
+              contract, brand resolution, brand onboarding, multi-brand review</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>The test:</strong> if the answer would be the same on a single-brand EDS site, it is
+     Adobe's question. If having several brands changes the answer, it is yours.</p>
+
+  <ol class="steps" style="counter-reset:st 12">
+    <li><div>
+      <h4>Write AGENTS.md and CLAUDE.md</h4>
+      <p><code>AGENTS.md</code> is the cross-agent standard — Cursor, Codex, and Claude Code all
+         read it. <code>CLAUDE.md</code> defers to it so there is one source of truth.</p>
+      <div class="code"><span class="filename">AGENTS.md</span><button class="copy" type="button">copy</button>
+<pre><code># Agent guide — multi-brand AEM Edge Delivery Services
+
+One repository, one pipeline, several brands. **A brand is data (tokens, content,
+config), not code.**
+
+## Searching
+
+When looking anything up about Edge Delivery Services, **search www.aem.live**.
+Unconstrained, "EDS" returns Ehlers-Danlos syndrome or CDN edge-compute products, and
+"AEM" returns the Java/JCR/OSGi stack. https://www.aem.live/llms.txt is an
+AI-oriented index of the documentation.
+
+## Which skill owns what
+
+Adobe's `aem-edge-delivery-services` plugin owns how EDS works. The `brand-*` skills
+own what differs per brand. Neither replaces the other.
+
+## Setup
+
+    npm install
+    aem up
+    npm run lint
+    node scripts/validate-tokens.mjs
+
+## Hard rules
+
+- Never modify `scripts/aem.js`. Extend in `scripts/lib/`.
+- Never branch on a brand name. Branch on a capability: `hasFeature('commerce')`.
+- Shared block CSS uses `var(--token)` only. No hex, no font stacks.
+- Third-party scripts go in `delayed.js`, never eager or lazy.
+- A block ships with its Universal Editor model and filter entry, or it is not done.
+- Every change is verified on every brand in `brands.json`.</code></pre></div>
+      <div class="code"><span class="filename">CLAUDE.md</span><button class="copy" type="button">copy</button>
+<pre><code>@AGENTS.md
+
+Claude-specific notes:
+
+- Commands: `/brand-block &lt;name&gt;`, `/brand-onboard &lt;key&gt;`, `/brand-review`.
+- `brand-architecture` loads automatically for work under blocks/, styles/, scripts/.
+- Adobe's EDS skills own EDS mechanics; use brand-* for multi-brand decisions.</code></pre></div>
+      <details class="why">
+        <summary>Why these files?</summary>
+        <div class="why-body">
+          <p><strong>What they are:</strong> the cross-agent instructions for this repo —
+             <code>AGENTS.md</code> is read by Cursor, Codex, and Claude Code alike;
+             <code>CLAUDE.md</code> just defers to it plus a couple of Claude-specific notes.</p>
+          <p><strong>Why you need them:</strong> without them, any coding agent starts from zero
+             context and makes reasonable-sounding guesses that violate this framework's
+             conventions — branching on a brand name, hardcoding a hex colour, editing
+             <code>aem.js</code>. This is what makes those mistakes avoidable instead of
+             inevitable.</p>
+          <p><strong>What each section does:</strong></p>
+          <ul>
+            <li><strong>Searching</strong> — points agents at <code>www.aem.live</code> so
+                "EDS"/"AEM" don't resolve to an unrelated syndrome or product line.</li>
+            <li><strong>Which skill owns what</strong> — the one-line test for routing a question
+                to Adobe's skills vs. this project's <code>brand-*</code> skills.</li>
+            <li><strong>Setup</strong> — the exact commands to get from clone to a validated local
+                environment.</li>
+            <li><strong>Hard rules</strong> — the non-negotiables: never touch
+                <code>aem.js</code>, never branch on a brand name, tokens only in shared CSS,
+                third-party scripts stay in <code>delayed.js</code>, every block ships a UE model
+                and filter entry, every change is checked against every brand.</li>
+            <li><code>CLAUDE.md</code>'s own notes — the slash commands, when
+                <code>brand-architecture</code> auto-loads, and the Adobe-vs-<code>brand-*</code>
+                routing restated for Claude specifically.</li>
+          </ul>
+        </div>
+      </details>
+    </div></li>
+
+    <li><div>
+      <h4>Add the project skills</h4>
+      <p>Copy the four skill folders into <code>.claude/skills/</code>. They are committed to the
+         repository like any other configuration, so every clone gets them with no setup step,
+         and cloud sessions load them too.</p>
+      <div class="note">
+        <b>Where these come from, on a second or third project</b>
+        <p>The first time through this manual, these four folders come from wherever this
+           framework was handed to you. Every time after that, they — plus the validation
+           scripts in step 19 and the framework doc they cite as authority — should come from
+           the <code>eds-platform-marketplace</code> repository created in step 16, not a local
+           copy on one machine. That repository keeps <code>scripts/</code> and
+           <code>docs/</code> folders at its root for exactly this: <code>git clone</code> it and
+           copy from there, rather than asking around for a folder someone else has.
+           <code>brand-architecture</code> itself knows to point here if those files are ever
+           missing from a project.</p>
+      </div>
+      <div class="tree">.claude/skills/
+  brand-architecture/     always-on conventions + references + assets
+    SKILL.md
+    references/           block development, tokens, onboarding, review,
+                          performance, coding standards, Adobe integration
+    assets/               block template, example registry, example contract
+  brand-block/            /brand-block &lt;name&gt;
+  brand-onboard/          /brand-onboard &lt;key&gt;
+  brand-review/           /brand-review</div>
+      <p>Only <code>brand-architecture</code> loads automatically, scoped by
+         <code>paths</code> frontmatter so it appears when someone edits a block and stays out of
+         the way otherwise. The three commands are manual-only, because scaffolding and onboarding
+         have side effects that should stay on a human trigger.</p>
+      <div class="code"><span class="filename">.claude/skills/brand-architecture/SKILL.md — frontmatter</span><button class="copy" type="button">copy</button>
+<pre><code>---
+name: brand-architecture
+description: Multi-brand conventions for this Adobe Edge Delivery Services repo…
+paths:
+  - blocks/**
+  - styles/**
+  - scripts/**
+  - brands.json
+---</code></pre></div>
+      <details class="why">
+        <summary>Why these files?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> the actual enforcement layer — <code>brand-architecture</code>
+             (always-on conventions) plus three on-demand commands (<code>brand-block</code>,
+             <code>brand-onboard</code>, <code>brand-review</code>), committed to the repo so
+             every clone and every cloud session gets them automatically.</p>
+          <p><strong>Why you need it:</strong> <code>AGENTS.md</code> states the rules; this is
+             what makes an agent actually apply the Divergence Ladder, the token contract, and the
+             brand-onboarding steps consistently, instead of relying on it to remember a document
+             it read once at the start of a session.</p>
+          <p><strong>Fields</strong> (frontmatter):</p>
+          <ul>
+            <li><code>name</code> — the skill's identifier: what <code>/skills</code> lists and
+                what a command like <code>/brand-block</code> resolves to.</li>
+            <li><code>description</code> — what the agent matches against to decide whether this
+                skill is relevant to the current work.</li>
+            <li><code>paths</code> — the glob(s) that make this skill load automatically when a
+                matching file is open; omit it (as the three command skills do) to keep a skill
+                manual-only.</li>
+          </ul>
+        </div>
+      </details>
+    </div></li>
+
+    <li><div>
+      <h4>Register both marketplaces</h4>
+      <p>Declaring them in <code>.claude/settings.json</code> means teammates are prompted to
+         install on folder trust, rather than each person setting it up by hand.</p>
+      <div class="code"><span class="filename">.claude/settings.json</span><button class="copy" type="button">copy</button>
+<pre><code>{
+  "extraKnownMarketplaces": {
+    "adobe-skills":  { "source": { "source": "github", "repo": "adobe/skills" } },
+    "eds-platform":  { "source": { "source": "github", "repo": "YOUR-ORG/eds-platform-marketplace" } }
+  },
+  "enabledPlugins": {
+    "aem-edge-delivery-services@adobe-skills": true,
+    "brand-platform@eds-platform": true
+  },
+  "permissions": {
+    "deny": ["Edit(scripts/aem.js)", "Write(scripts/aem.js)"]
+  }
+}</code></pre></div>
+      <details class="why">
+        <summary>Why this file?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> registers the two skill marketplaces (Adobe's official
+             EDS skills, and this project's own) so a teammate is prompted to install them on
+             first folder trust, plus a hard deny on editing <code>scripts/aem.js</code>.</p>
+          <p><strong>Why you need it:</strong> without this, every developer has to independently
+             know to run the marketplace-install commands, and nothing stops an agent from
+             proposing an edit to the one file that must never change.</p>
+          <p><strong>Fields:</strong></p>
+          <ul>
+            <li><code>extraKnownMarketplaces</code> — the marketplaces a teammate is prompted to
+                trust on first folder open, keyed by a short local name.</li>
+            <li><code>enabledPlugins</code> — which plugin, from which marketplace
+                (<code>plugin@marketplace</code>), is turned on by default.</li>
+            <li><code>permissions.deny</code> — hard-blocked tool actions; here, editing or
+                writing <code>scripts/aem.js</code> from any agent, regardless of
+                instructions.</li>
+          </ul>
+        </div>
+      </details>
+      <p>Or install by hand:</p>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>/plugin marketplace add adobe/skills
+/plugin install aem-edge-delivery-services@adobe-skills
+
+/plugin marketplace add YOUR-ORG/eds-platform-marketplace
+/plugin install brand-platform@eds-platform</code></pre></div>
+      <p>Two Adobe plugins are worth adding on most projects:
+         <code>aem-design</code> for brand profiles, briefings, and static prototypes before
+         implementation, and <code>aem-project-management</code> for authoring, developer, and
+         admin handover documents.</p>
+      <div class="verify"><b>CHECK</b><p>Run <code>/skills</code>. You should see Adobe's EDS
+        skills and the four <code>brand-*</code> skills.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Publish your own marketplace</h4>
+      <p>Optional for one project, essential for more than one. A plugin from an internal
+         marketplace is <strong>namespaced</strong>, so a developer's personal skill of the same
+         name cannot shadow it and the <code>skillOverrides</code> setting cannot silence it.
+         Project skills can be shadowed and silenced; plugin skills cannot. For a standard that
+         must hold across a team, that difference is the entire argument.</p>
+      <p>This repository is also the answer to "where did these files come from" for every
+         project after the first: keep <code>scripts/</code> and <code>docs/</code> folders at
+         its root, alongside the plugin, holding the validation scripts and the framework doc
+         verbatim. A new project clones this repo and copies from there, instead of a teammate
+         hunting down whoever still has the original folder.</p>
+      <div class="tree">eds-platform-marketplace/          a separate internal repository
+  .claude-plugin/marketplace.json
+  plugins/brand-platform/
+    .claude-plugin/plugin.json
+    skills/                        the same four skills
+  scripts/                         validate-tokens.mjs, validate-skills.mjs, onboard-brand.mjs
+  docs/                            Multi-Brand-EDS-Framework.md</div>
+      <div class="code"><span class="filename">.claude-plugin/marketplace.json</span><button class="copy" type="button">copy</button>
+<pre><code>{
+  "name": "eds-platform",
+  "owner": { "name": "Platform Guild", "email": "guild@your-org.com" },
+  "metadata": { "description": "Multi-brand EDS engineering standards.", "version": "1.0.0" },
+  "plugins": [
+    {
+      "name": "brand-platform",
+      "source": "./plugins/brand-platform",
+      "description": "Divergence Ladder, token contract, brand onboarding, multi-brand review.",
+      "version": "1.0.0"
+    }
+  ]
+}</code></pre></div>
+      <details class="why">
+        <summary>Why this file?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> the manifest for an internal plugin marketplace hosting
+             this project's <code>brand-platform</code> skill bundle, published from a separate
+             repository.</p>
+          <p><strong>Why you need it:</strong> a plugin installed from a marketplace is
+             namespaced — a developer's personal skill of the same name can't shadow it, and
+             <code>skillOverrides</code> can't silence it. For a standard that has to hold across
+             a whole team, that's the difference that matters; a plain project skill can be
+             shadowed or turned off locally.</p>
+          <p><strong>Fields:</strong></p>
+          <ul>
+            <li><code>name</code> — the marketplace's identifier, what appears after the
+                <code>@</code> in <code>plugin@marketplace</code>.</li>
+            <li><code>owner</code> — who to contact about this marketplace's contents.</li>
+            <li><code>metadata</code> — the marketplace's own description and version.</li>
+            <li><code>plugins</code> — the list of plugins it hosts; each entry's
+                <code>source</code> points at the plugin's folder within this repository, and
+                <code>version</code> is what version-pinning checks against.</li>
+          </ul>
+        </div>
+      </details>
+      <div class="note">
+        <b>Run both layers during rollout</b>
+        <p>Committed project skills work immediately with no install step. The plugin then takes
+           over as the tamper-resistant copy. Because the plugin namespace differs, the two
+           coexist without conflict, and you can thin the project copy later to whatever is
+           genuinely repository-specific.</p>
+      </div>
+      <div class="verify"><b>CHECK</b><p><code>claude plugin validate .</code> passes in the
+        marketplace repository.</p></div>
+    </div></li>
+  </ol>
+</section>
+
+<section id="skills-enforce">
+  <h2>Part 2 · Make them stick</h2>
+  <p class="kicker">Steps 17–18 · because a skill is guidance, not a gate</p>
+
+  <p class="lede">A skill is text loaded into an agent's context. Four things quietly defeat it: a
+     developer never installs it; edits it locally to unblock themselves; has a personal skill of
+     the same name shadowing the project one; or turns it off in their own
+     <code>settings.local.json</code>. None of that reaches CI, which is why the standard has to
+     be checked there.</p>
+
+  <ol class="steps" style="counter-reset:st 16">
+    <li><div>
+      <h4>Pin the skills</h4>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>node scripts/validate-skills.mjs --update-lock
+git add .claude AGENTS.md CLAUDE.md platform.json scripts .github .husky
+git commit -m "chore: add multi-brand agent configuration"</code></pre></div>
+      <p>This writes <code>.claude/skills.lock.json</code>, a content hash per skill. From now on
+         the gate detects any edit.</p>
+      <details class="why">
+        <summary>Why this file?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> <code>.claude/skills.lock.json</code>, a content hash
+             of every skill, generated by <code>validate-skills.mjs --update-lock</code> — you
+             don't author it by hand.</p>
+          <p><strong>Why you need it:</strong> a skill is just text loaded into an agent's
+             context — nothing stops someone editing it locally to unblock themselves, or a
+             personal skill silently shadowing it. This lock file is what lets CI detect either
+             of those instead of trusting that everyone left the shared skill alone.</p>
+          <p><strong>What it records:</strong></p>
+          <ul>
+            <li>one entry per skill, by file path.</li>
+            <li>a content hash of that skill's current text — any edit, local or shadowing,
+                changes the hash and trips the gate.</li>
+          </ul>
+        </div>
+      </details>
+      <div class="verify"><b>CHECK</b><p><code>node scripts/validate-skills.mjs</code> prints
+        <code>Agent config OK</code>.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Turn the gate on</h4>
+      <p>Run this locally now; the <code>static</code> CI job you'll add in step 20 runs
+         <code>validate-skills.mjs</code> on every PR — add frontmatter validation alongside it
+         there too:</p>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>npm install -g @anthropic-ai/claude-code
+claude plugin validate .claude/skills</code></pre></div>
+      <p>Worth automating because the failure is silent: when frontmatter does not parse, the
+         skill still loads with empty metadata, so typing its command works while the agent has no
+         description to match against and never invokes it on its own.</p>
+      <div class="note key">
+        <b>Warn on a branch, fail on main</b>
+        <p>The gate treats skill drift as a warning on a feature branch and a failure on
+           <code>main</code>. Experimenting with a skill on a branch is how skills improve; an
+           unreviewed edit reaching <code>main</code> is usually someone solving their own problem
+           in everyone's file. Intentional changes run <code>--update-lock</code>, and the diff is
+           reviewed like any other change.</p>
+      </div>
+      <div class="verify"><b>CHECK</b><p>Append a line to a <code>SKILL.md</code> and run the
+        gate. It warns locally; with <code>GITHUB_BASE_REF=main</code> set, it fails.</p></div>
+    </div></li>
+  </ol>
+
+  <h3>Optional: organisation-wide enforcement</h3>
+  <p>For a mandate that spans repositories, administrators can deploy skills through managed
+     settings, which sit above personal and project skills and cannot be overridden.
+     <code>forcedPlugins</code> installs without user interaction — useful for CI containers —
+     and <code>strictKnownMarketplaces</code> restricts which marketplaces developers may add.</p>
+  <p>Do not start here. Managed settings are an IT change with a slow feedback loop, and a
+     standard that needs enforcing before anyone has used it usually needs editing first. Ship the
+     repository layers, let the team iterate for a quarter, then decide.</p>
+</section>
+
+<section id="gates">
+  <h2>Part 3 · Install the quality gates</h2>
+  <p class="kicker">Steps 19–20 · what CI blocks on</p>
+
+  <ol class="steps" style="counter-reset:st 18">
+    <li><div>
+      <h4>Add the validation scripts</h4>
+      <p>Copy <code>validate-tokens.mjs</code>, <code>validate-skills.mjs</code>, and
+         <code>onboard-brand.mjs</code> into <code>scripts/</code>. They read
+         <code>platform.json</code>, so no edits are needed per project — copy them as-is from
+         <code>eds-platform-marketplace</code>'s <code>scripts/</code> folder (see the note in
+         step 14), the same source every other project copies from.</p>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>node scripts/validate-tokens.mjs</code></pre></div>
+      <p>This checks that every brand defines every contract token <em>with a real value</em>,
+         that no brand file contains styling, that no shared block CSS carries a hardcoded colour
+         or font stack, and reports the fork ratio.</p>
+      <details class="why">
+        <summary>Why these files?</summary>
+        <div class="why-body">
+          <p><strong>What they are:</strong> the three scripts that turn this framework's rules
+             into something CI actually checks — token contract completeness and
+             hardcoded-literal scanning, skill presence and drift detection, and brand scaffolding
+             and auditing.</p>
+          <p><strong>Why you need them:</strong> every rule in this manual that isn't enforced by
+             one of these scripts is guidance a developer can, and eventually will, skip under
+             deadline pressure. These are what turn the rules into a gate instead of a
+             suggestion.</p>
+          <p><strong>What each script does:</strong></p>
+          <ul>
+            <li><code>validate-tokens.mjs</code> — checks every brand defines every contract
+                token with a real value, flags brand files that contain styling instead of
+                tokens, scans shared block CSS for hardcoded colours/fonts, and reports the fork
+                ratio.</li>
+            <li><code>validate-skills.mjs</code> — confirms the skill bundle is present and
+                unmodified against <code>skills.lock.json</code>, and (with
+                <code>--update-lock</code>) regenerates that lock file.</li>
+            <li><code>onboard-brand.mjs</code> — scaffolds a new brand's registry entry, token
+                file, and asset directories, and (with <code>--check</code>) audits which
+                onboarding steps remain.</li>
+          </ul>
+        </div>
+      </details>
+      <div class="verify"><b>CHECK</b><p>Output ends with <code>Token validation passed.</code>
+        and a fork ratio of 0%.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Wire CI and the pre-commit hook</h4>
+      <div class="code"><span class="filename">.github/workflows/quality-gates.yml</span><button class="copy" type="button">copy</button>
+<pre><code>name: Quality gates
+on:
+  pull_request: { branches: [main] }
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - run: npx eslint . --max-warnings 0
+      - run: npx stylelint "**/*.css" --max-warnings 0
+      - run: node scripts/validate-tokens.mjs
+      - run: node scripts/validate-skills.mjs
+
+  budgets:
+    runs-on: ubuntu-latest
+    needs: static
+    strategy:
+      fail-fast: false
+      matrix:
+        brand: [alpha]        # onboard-brand.mjs appends new brands here
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lighthouse
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: https://main--YOUR-REPO--YOUR-ORG.aem.page/${{ matrix.brand }}/
+          uploadArtifacts: true
+      - name: axe
+        run: npx @axe-core/cli "https://main--YOUR-REPO--YOUR-ORG.aem.page/${{ matrix.brand }}/" --exit</code></pre></div>
+      <div class="code"><span class="filename">.husky/pre-commit</span><button class="copy" type="button">copy</button>
+<pre><code>#!/usr/bin/env sh
+node scripts/validate-skills.mjs --quiet
+node scripts/validate-tokens.mjs --quiet
+npx lint-staged</code></pre></div>
+      <details class="why">
+        <summary>Why these files?</summary>
+        <div class="why-body">
+          <p><strong>What they are:</strong> the CI workflow (lint, then token/skill validation,
+             then Lighthouse and axe per brand) and the local pre-commit hook that runs the fast
+             checks before a commit even reaches GitHub.</p>
+          <p><strong>Why you need them:</strong> pre-commit catches the cheap failures immediately
+             on your own machine; CI is what actually blocks a merge, and it's the only check a
+             developer can't skip by forgetting to run something locally.</p>
+          <p><strong>What each job/hook does:</strong></p>
+          <ul>
+            <li><code>static</code> job — install, lint (ESLint + Stylelint), then the two
+                validation scripts; fails the PR on any of them.</li>
+            <li><code>budgets</code> job — Lighthouse and axe against every brand in the matrix,
+                so a regression on a low-traffic brand can't hide behind a blended average.</li>
+            <li><code>.husky/pre-commit</code> — the fast, quiet versions of the two validation
+                scripts plus <code>lint-staged</code>, run locally before a commit is even
+                made.</li>
+          </ul>
+        </div>
+      </details>
+      <div class="note">
+        <b>Repoless: the matrix needs a hostname per brand, not a path per brand</b>
+        <p><code>urls: https://main--YOUR-REPO--YOUR-ORG.aem.page/${{ matrix.brand }}/</code> only
+           works when brands share one site and differ by path. On a repoless setup each brand is
+           its own site, so its preview hostname doesn't follow a formula from the repo name —
+           add it explicitly per brand with <code>include</code>:</p>
+        <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>strategy:
+  matrix:
+    brand: [alpha]
+    include:
+      - brand: alpha
+        preview_host: alpha--YOUR-REPO--YOUR-ORG
+      # a second repoless brand's own site name goes here, not a /brand/ suffix
+steps:
+  - name: Resolve preview URL
+    id: url
+    run: echo "url=https://${{ github.head_ref }}--${{ matrix.preview_host }}.aem.page/" >> "$GITHUB_OUTPUT"
+  - name: Lighthouse
+    uses: treosh/lighthouse-ci-action@v11
+    with: { urls: "${{ steps.url.outputs.url }}", uploadArtifacts: true }</code></pre></div>
+      </div>
+      <div class="note">
+        <b>Some boilerplate variants already ship a pre-commit hook</b>
+        <p>The block above assumes an empty <code>.husky/pre-commit</code>. Some copies of the
+           boilerplate ship their own — commonly a script that rebuilds
+           <code>component-*.json</code> from <code>ue/models/</code> when one of those files is
+           staged. Check first: if <code>.husky/pre-commit</code> already exists, add these lines
+           above the existing content rather than replacing the file, so both keep running.</p>
+      </div>
+      <div class="note key">
+        <b>One Lighthouse run per brand, not one per site</b>
+        <p>A blended average hides a regression in whichever brand has less traffic — which is
+           exactly the brand nobody is watching. The matrix is what makes multi-brand testing
+           automatic, and <code>onboard-brand.mjs</code> appends to it when a brand is added.</p>
+      </div>
+      <div class="verify"><b>CHECK</b><p>Open a throwaway pull request. Both jobs run, and the
+        <code>budgets</code> job shows one entry per brand.</p></div>
+    </div></li>
+  </ol>
+</section>
+
+<section id="onboard">
+  <h2>Part 4 · Onboard a brand</h2>
+  <p class="kicker">Steps 21–29 · the repeatable procedure</p>
+
+  <p class="lede">Target: a new brand in preview within a day, touching <strong>zero shared
+     JavaScript</strong>. If a step forces you to edit a block, stop and record it as a framework
+     defect — the fix is to lift that difference into a token, a capability flag, or content.
+     Every branch added during onboarding is a tax every future brand pays.</p>
+
+  <ol class="steps" style="counter-reset:st 20">
+    <li><div>
+      <h4>Choose the key and plan the run</h4>
+      <p>Lowercase alphanumeric, no hyphens, used verbatim everywhere. Then dry-run:</p>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>node scripts/onboard-brand.mjs beta --from alpha --dry-run</code></pre></div>
+      <p><code>--from</code> clones an existing brand's capability flags, endpoint keys, and
+         authoring filters rather than inventing a new shape. Brands in one repository tend to
+         share a capability surface, and inventing shapes is how registries drift.</p>
+      <div class="verify"><b>CHECK</b><p>The plan lists the registry, token file, directories,
+        index, CI matrix, and checklist. Nothing is written yet.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Run it</h4>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>node scripts/onboard-brand.mjs beta \
+  --name "Beta" \
+  --prefix /beta \
+  --host beta.example.com \
+  --locale en-us \
+  --from alpha</code></pre></div>
+      <table>
+        <thead><tr><th style="width:46%">Written automatically</th><th>Left to a person</th></tr></thead>
+        <tbody>
+          <tr><td>Registry entry in <code>brands.json</code></td><td>Token values from the design system</td></tr>
+          <tr><td>Token file stubbed against the full contract</td><td>Logo, inverse logo, favicon, web fonts</td></tr>
+          <tr><td><code>icons/beta/</code> and <code>fonts/beta/</code></td><td>Content tree and brand metadata</td></tr>
+          <tr><td>Index entry in the query config</td><td>Authoring filter review</td></tr>
+          <tr><td>CI matrix entry</td><td>Template pages</td></tr>
+          <tr><td>Checklist at <code>docs/brands/beta.md</code></td><td>Contrast, Lighthouse, axe</td></tr>
+        </tbody>
+      </table>
+      <p>The command is idempotent. Re-running it after a partial rollout fills only the gaps, so
+         it is safe to run again at any point.</p>
+    </div></li>
+
+    <li><div>
+      <h4>Fill the token values</h4>
+      <p>Open <code>styles/brands/beta.css</code> and replace every <code>TODO</code>. Define
+         private primitives first, then map the contract onto them.</p>
+      <div class="note warn">
+        <b>Leave nothing blank</b>
+        <p>An unfilled token does not fall back to a sensible default — it inherits from whichever
+           brand loaded, which surfaces as a wrong colour on one page, weeks later, in production.
+           The validator treats a stub as a failure precisely because it looks complete.</p>
+      </div>
+      <div class="verify"><b>CHECK</b><p><code>node scripts/validate-tokens.mjs</code> reports no
+        unfilled tokens for this brand.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Add the brand assets</h4>
+      <ul>
+        <li>Logo, inverse logo, favicon → <code>icons/beta/</code></li>
+        <li>woff2 web fonts → <code>fonts/beta/</code></li>
+        <li><code>@font-face</code> in the brand token file, <code>font-display: swap</code>,
+            fallback metrics matched with <code>size-adjust</code></li>
+      </ul>
+      <div class="verify"><b>CHECK</b><p>Load a page for this brand and inspect the network panel:
+        no other brand's fonts are downloaded. Font swap is the most common source of layout
+        shift on EDS sites, and cross-brand font loading is a silent tax on both brands.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Create the content tree</h4>
+      <p>The content team creates <code>/beta/</code> containing:</p>
+      <ul>
+        <li><code>nav</code> and <code>footer</code> documents</li>
+        <li><code>placeholders.json</code> with every key the shared blocks read</li>
+        <li>a <code>metadata</code> sheet</li>
+        <li>a home page and one page per template</li>
+      </ul>
+      <p>Copy the placeholder keys from an existing brand so none are missed. A missing key
+         renders a fallback string, which is easy to miss in review and impossible to spot in a
+         screenshot.</p>
+    </div></li>
+
+    <li><div>
+      <h4>Assign the brand in metadata</h4>
+      <p>In the bulk metadata sheet, set <code>theme: beta</code> for <code>/beta/**</code>, plus
+         <code>nav</code> and <code>footer</code> paths if they differ from the convention.</p>
+      <div class="verify"><b>CHECK</b><p>Load a page under <code>/beta/</code> and confirm
+        <code>document.documentElement.dataset.brand === 'beta'</code> in the console.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Scope the authoring surface</h4>
+      <p>Update <code>component-filters.json</code> so authors on this brand see only blocks valid
+         for it. If the brand has no commerce, a commerce block should not be offerable.</p>
+      <p>Filters are the <strong>structural</strong> guardrail that replaces relying on authors to
+         remember. Every forked or brand-exclusive block must be filtered, or a mis-authored page
+         will silently render another brand's component.</p>
+      <details class="why">
+        <summary>Why this file?</summary>
+        <div class="why-body">
+          <p><strong>What it is:</strong> the file that scopes which blocks the Universal Editor
+             offers to authors on a given page or brand.</p>
+          <p><strong>Why you need it:</strong> this is the structural guardrail that replaces
+             relying on an author to remember which blocks belong to which brand — if a commerce
+             block shouldn't exist on a brand with no commerce, filtering it out here makes it
+             literally impossible to insert, not just discouraged.</p>
+          <p><strong>What it typically constrains:</strong></p>
+          <ul>
+            <li>an allow-list (or deny-list) of block names offerable in the block picker, scoped
+                per template or per section.</li>
+            <li>the brand or page context each entry applies to, so a commerce block can be
+                offered on brands with commerce and hidden everywhere else.</li>
+          </ul>
+        </div>
+      </details>
+    </div></li>
+
+    <li><div>
+      <h4>Build the templates</h4>
+      <p>One template page per page type, pre-populated with the right blocks and sections.
+         Templates are what make authoring fast and consistent; training supplements them rather
+         than replacing them.</p>
+    </div></li>
+
+    <li><div>
+      <h4>Audit what remains</h4>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>node scripts/onboard-brand.mjs beta --check</code></pre></div>
+      <p>Reports every machine-checkable step: registry entry, token completeness, asset
+         directories, index, CI matrix. Content and template steps are not machine-checkable and
+         stay on the generated checklist.</p>
+      <div class="verify"><b>CHECK</b><p><code>All machine-checkable steps complete.</code></p></div>
+    </div></li>
+  </ol>
+</section>
+
+<section id="signoff">
+  <h2>Part 4 · Verify and sign off</h2>
+  <p class="kicker">Step 30 · the gates that only a person can start</p>
+
+  <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>node scripts/validate-tokens.mjs
+node scripts/validate-skills.mjs
+npm run lint</code></pre></div>
+
+  <p>Then, on this brand's preview URL:</p>
+  <ul class="check">
+    <li>Lighthouse mobile — 100 across performance, accessibility, best practices, SEO</li>
+    <li>axe clean on the home page, a listing page, and a detail page</li>
+    <li>Contrast verified against <strong>this brand's</strong> token values — 4.5:1 for body
+        text, 3:1 for large text and UI</li>
+    <li>A smoke page exercising every shared block, checked visually</li>
+    <li>Fonts, icons, and logo all resolving from this brand's directories</li>
+    <li>Every existing brand re-verified as unaffected</li>
+    <li><strong>Zero shared JavaScript modified</strong> — if any step required it, log the defect</li>
+    <li>Onboarding time recorded and friction points written down</li>
+  </ul>
+
+  <div class="note warn">
+    <b>Contrast is per brand, not per component</b>
+    <p>A shared component inherits different colour values per brand, so passing 4.5:1 for one
+       brand proves nothing about another. This is the accessibility failure that multi-brand
+       architecture makes most likely, and it is invisible unless you check each brand
+       separately.</p>
+  </div>
+
+  <div class="note key">
+    <b>The friction list is the point</b>
+    <p>Whatever slowed this onboarding down is the framework's remaining debt, and it is the only
+       honest measure of whether the architecture works. Fix the top item before the next brand
+       arrives.</p>
+  </div>
+</section>
+
+<section id="agent">
+  <h2>Part 5 · Running this with Claude Code</h2>
+  <p class="kicker">Four stages &#183; splitting Parts 1&#8211;4 between you and the agent</p>
+
+  <p class="lede">This section adds no new work. It explains how to split the procedure you have
+     already read &#8212; Parts 1 through 4 &#8212; between you and an agent: it does the
+     repetitive file work in Part 1 and Part 3 (and the machine-checkable half of Part 4), while
+     everything else stays exactly as written. Nothing here is optional work you can skip by
+     using an agent.</p>
+
+  <h3>What it covers</h3>
+  <table>
+    <thead><tr><th style="width:30%">Manual steps</th><th style="width:22%">Who</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Part 1, steps 1&#8211;5<br><small>repository, Code Sync, content source, local dev, lint</small></td>
+          <td><strong>You</strong></td>
+          <td>Browser actions, organisation admin, account permissions. Must be done and working first.</td></tr>
+      <tr><td>Part 2, steps 13&#8211;18<br><small>skills, marketplaces, enforcement</small></td>
+          <td><strong>You</strong></td>
+          <td>Stage 1 below. Plugin installation is interactive; the bundle must be in place before the agent starts.</td></tr>
+      <tr><td>Part 1 step 6 and steps 7&#8211;12; Part 3 steps 19&#8211;20<br><small>project shape, brand layer, quality gates</small></td>
+          <td><strong>Agent</strong></td>
+          <td>Stage 3 below. You supply token values.</td></tr>
+      <tr><td>Part 4, steps 21&#8211;29<br><small>brand onboarding</small></td>
+          <td><strong>Agent</strong></td>
+          <td>Stage 4 below. Content tree, metadata, and templates remain with the content team.</td></tr>
+      <tr><td>Part 4, step 30<br><small>verification and sign-off</small></td>
+          <td><strong>You</strong></td>
+          <td>Lighthouse, axe, per-brand contrast, visual check. An agent reporting success is not the same as success.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note key">
+    <b>Part 2 comes first either way</b>
+    <p>The agent cannot install its own skills. Copy the bundle in and install the marketplaces
+       before the first prompt, or you get a session that behaves like any other &#8212; competent
+       at generic web development, unaware of every convention in this manual.</p>
+  </div>
+
+  <h3>What stays with you regardless</h3>
+  <table>
+    <thead><tr><th style="width:46%">Task</th><th>Why it cannot be delegated</th></tr></thead>
+    <tbody>
+      <tr><td>Install the AEM Code Sync GitHub App</td><td>Browser action requiring organisation admin</td></tr>
+      <tr><td>Bind the content source</td><td>Needs your account and permissions</td></tr>
+      <tr><td>Supply brand token <strong>values</strong></td><td>They come from a design system. An agent asked for colours will produce plausible ones, which is worse than leaving them blank</td></tr>
+      <tr><td>Supply licensed web fonts</td><td>Licensing</td></tr>
+      <tr><td>Map production hostnames at the CDN</td><td>Infrastructure access</td></tr>
+      <tr><td>Install plugins, accept trust prompts</td><td>Interactive by design</td></tr>
+    </tbody>
+  </table>
+
+  <ol class="steps" style="counter-reset:st 0">
+    <li><div>
+      <h4>Prepare &#8212; copy the files in before opening the agent</h4>
+      <p>Order matters. Claude Code watches skill directories for changes, but if
+         <code>.claude/skills/</code> did not exist when the session started it is not watching
+         that path &#8212; you get a session where <code>/skills</code> shows nothing and the
+         reason is not obvious.</p>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>git clone https://github.com/naveenkambam-codeandtheory/eds-platform-marketplace /tmp/eds-platform
+cp -r /tmp/eds-platform/plugins/brand-platform/skills  .claude/skills
+cp    /tmp/eds-platform/scripts/*.mjs                  scripts/
+cp    /tmp/eds-platform/docs/*                         docs/
+mkdir -p docs .github/workflows .husky
+
+claude</code></pre></div>
+      <p>Or just run <code>node /tmp/eds-platform/scripts/bootstrap.mjs</code> — it does the
+         above, plus <code>platform.json</code>/<code>contract.json</code>/<code>brands.json</code>
+         scaffolding, in one command (see the note before step 6). <code>AGENTS.md</code> and
+         <code>CLAUDE.md</code> stay a separate, deliberate write either way — they should reflect
+         this project's specifics, not a generic template.</p>
+      <p>Accept the workspace trust prompt, then install the marketplaces yourself &#8212; plugin
+         installation is interactive and the agent cannot do it for you.</p>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>/plugin marketplace add adobe/skills
+/plugin install aem-edge-delivery-services@adobe-skills</code></pre></div>
+      <div class="verify"><b>CHECK</b><p><code>/skills</code> lists
+        <code>brand-architecture</code>, <code>brand-block</code>, <code>brand-onboard</code>,
+        <code>brand-review</code>, and Adobe's EDS skills.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Prompt 1 &#8212; orient it, plan only, no changes</h4>
+      <p>Correcting a misreading of your repository costs a paragraph. Correcting generated code
+         costs an hour. Always spend the first prompt on a plan.</p>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>Read docs/setup-guide.html and AGENTS.md, plus the skill at
+.claude/skills/brand-architecture/SKILL.md and its references/.
+
+Then inspect this repository and tell me:
+
+1. Which setup steps are already satisfied by the boilerplate.
+2. Which files this framework needs that are missing: platform.json,
+   brands.json, styles/tokens/contract.json, styles/brands/, scripts/brand.js.
+3. What already exists in scripts/scripts.js that the brand resolution hook
+   has to fit into - quote the current loadEager.
+4. A step-by-step plan for Part 1, adapted to what is actually here rather
+   than the generic version.
+
+Do not change any files yet. Search www.aem.live for anything about EDS itself.</code></pre></div>
+      <div class="verify"><b>CHECK</b><p>The plan matches your repository. If it does not, correct
+        it now, before any code is generated.</p></div>
+    </div></li>
+
+    <li><div>
+      <h4>Prompts 2 and 3 &#8212; build the brand layer, then the gates</h4>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>Execute Part 1 of docs/setup-guide.html, steps 6 through 12, on this repository.
+
+Use these values:
+- Brand keys: &lt;key-a&gt;, &lt;key-b&gt;      (lowercase alphanumeric, no hyphens)
+- Path prefixes: /&lt;key-a&gt;, /&lt;key-b&gt;
+- Locales: &lt;en-us&gt;
+
+Create platform.json, brands.json, styles/tokens/contract.json, one token file
+per brand with every contract token stubbed, scripts/brand.js, and the loadEager
+hook in scripts/scripts.js. Add per-brand entries to helix-query.yaml.
+
+Leave token VALUES as TODO - I will fill them from the design system.
+Do not modify scripts/aem.js.
+
+After each step, run the verification described in the guide and show me the
+result before moving on.</code></pre></div>
+      <p>Fill the token values, then continue:</p>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>Execute Part 3 steps 19 and 20: add the CI workflow and the pre-commit hook,
+with the per-brand matrix covering every brand in brands.json.
+
+Then run:
+  node scripts/validate-tokens.mjs
+  node scripts/validate-skills.mjs --update-lock
+  npm run lint
+
+Fix anything that fails, except unfilled token values - report those instead.</code></pre></div>
+      <div class="note key">
+        <b>Expect a failure here</b>
+        <p><code>validate-tokens.mjs</code> will fail on unfilled tokens until you supply the
+           values. That is the gate working, not a broken setup. A stub looks complete and
+           resolves to nothing at runtime, which is exactly why it is treated as an error.</p>
+      </div>
+    </div></li>
+
+    <li><div>
+      <h4>Prompt 4 &#8212; onboard brands</h4>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>Onboard a new brand using /brand-onboard.
+Key: &lt;key&gt;, name: &lt;Name&gt;, host: &lt;host&gt;, cloning the shape of &lt;existing-brand&gt;.
+
+Start with --dry-run and show me the plan. After I approve, run it for real,
+then run --check and tell me exactly what is left for me and for the content team.</code></pre></div>
+      <div class="verify"><b>CHECK</b><p><code>node scripts/onboard-brand.mjs &lt;key&gt; --check</code>
+        reports all machine-checkable steps complete.</p></div>
+    </div></li>
+  </ol>
+
+  <h3>Working rules for the session</h3>
+  <ul>
+    <li><strong>One part per pull request.</strong> A pull request spanning several parts
+        cannot be reviewed against the Divergence Ladder, because the reviewer cannot hold that
+        many decisions at once.</li>
+    <li><strong>Make it run the checkpoints.</strong> If a verification step is skipped, ask for
+        it. Fluent output is not evidence that anything works.</li>
+    <li><strong><code>scripts/aem.js</code> is denied</strong> in <code>.claude/settings.json</code>.
+        If the agent proposes editing it, the answer is no &#8212; the change belongs in
+        <code>scripts/lib/</code>.</li>
+    <li><strong>Say &#8220;search www.aem.live&#8221;</strong> whenever it looks something up.
+        <code>AGENTS.md</code> says this already, but repeating it in the prompt is cheap
+        insurance against the wrong &#8220;AEM&#8221;.</li>
+    <li><strong>Stop it if it edits several blocks at once.</strong> One block per change, with
+        the ladder rung stated.</li>
+  </ul>
+
+  <div class="note">
+    <b>What done looks like</b>
+    <p>Parts 1 and 3 complete means <code>brands.json</code>, <code>platform.json</code>, a filled
+       token contract for every brand, <code>brand.js</code> resolving with no flash of unstyled
+       content, per-brand indexes, and green CI on lint plus tokens. Nothing user-visible has
+       changed at that point &#8212; the correct outcome for a foundation phase, and worth saying
+       to stakeholders before you start rather than after they ask.</p>
+  </div>
+</section>
+
+<section id="ladder">
+  <h2>Reference · The Divergence Ladder</h2>
+  <p class="kicker">Start at the bottom. Stop at the first rung that works. Never skip.</p>
+
+  <p>When two brands need something different, climb. The rung you stop at goes in the pull
+     request description. Most requests that arrive sounding like a fork are L0 plus L2.</p>
+
+  <div class="ladder">
+    <div class="ladder-head"><b>Cost of divergence</b><span>L0 → L4 · ONGOING COST INCREASES</span></div>
+    <div class="rung">
+      <div class="rung-id"><b>L0</b><i>free</i></div>
+      <div class="rung-body"><h5>Content</h5>
+        <p>Different document, fragment, or sheet. Markup shape identical; only words, images, and links differ.</p>
+        <div class="rung-cost"><i class="on"></i><i></i><i></i><i></i><i></i></div></div>
+    </div>
+    <div class="rung">
+      <div class="rung-id"><b>L1</b><i>free</i></div>
+      <div class="rung-body"><h5>Tokens</h5>
+        <p>Colour, type, spacing, radius, elevation, logo — including component tokens, which absorb far more than people expect.</p>
+        <div class="rung-cost"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div></div>
+    </div>
+    <div class="rung">
+      <div class="rung-id"><b>L2</b><i>~10 lines</i></div>
+      <div class="rung-body"><h5>Variant</h5>
+        <p>An author writes <code>Cards (compact)</code>; EDS produces <code>.cards.compact</code>. Layout or density differs, behaviour identical.</p>
+        <div class="rung-cost"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div></div>
+    </div>
+    <div class="rung">
+      <div class="rung-id"><b>L3</b><i>one branch</i></div>
+      <div class="rung-body"><h5>Capability flag</h5>
+        <p><code>hasFeature('storeLocator')</code>. Behaviour differs by a named capability, never by a brand name, so the next brand opts in through the registry alone.</p>
+        <div class="rung-cost"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
+    </div>
+    <div class="rung rung--fork">
+      <div class="rung-id"><b>L4</b><i>forever</i></div>
+      <div class="rung-body"><h5>Fork — requires an ADR</h5>
+        <p>A second block at <code>&lt;brand&gt;-&lt;capability&gt;/</code>. All four must hold: more than ~40% of the JavaScript differs; the difference is structural, not visual; L0–L3 were genuinely attempted and the attempt is described in the pull request; and an ADR exists, is linked in a header comment in the block's JS, and names an owner and a review date.</p>
+        <div class="rung-cost"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
+    </div>
+  </div>
+
+  <h3>Worked example: two very different headers</h3>
+  <p>One brand has a flat navigation bar; another has a mega-menu with an embedded search. This
+     is the case that usually triggers a fork request. It is L0 + L2 + L3.</p>
+  <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>export default async function decorate(block) {
+  const { pathPrefix } = getBrandConfig();
+
+  // L0 — the nav document differs per brand; metadata points at it
+  const navPath = getMetadata('nav') || `${pathPrefix}/nav`;
+  const html = await fetch(`${navPath}.plain.html`).then((r) => (r.ok ? r.text() : ''));
+  if (!html) return;
+
+  const nav = document.createElement('nav');
+  nav.innerHTML = html;
+
+  // L2 — the block derives its variant from the shape of the content
+  const isMega = [...nav.children].some((s) => s.querySelector('ul ul'));
+  block.classList.toggle('header--mega', isMega);
+
+  // L3 — capability, not brand name
+  if (hasFeature('storeLocator')) nav.append(await buildLocator(pathPrefix));
+
+  decorateIcons(nav);
+  block.append(nav);
+}</code></pre></div>
+  <p>One block, three mechanisms, zero forks. A third brand with a flat nav and no locator is a
+     registry entry and a nav document.</p>
+
+  <div class="dd">
+    <div class="no"><h5>NEVER</h5>
+<pre><code>if (getBrand().key === 'alpha') {
+  logo = '/icons/alpha/logo.svg';
+}</code></pre>
+      <p>Hardcodes the brand list into this file. The next brand becomes a grep across the repository.</p></div>
+    <div class="yes"><h5>ALWAYS</h5>
+<pre><code>const { key } = getBrandConfig();
+const logo = `/icons/${key}/logo.svg`;
+
+if (hasFeature('commerce')) { … }</code></pre>
+      <p>A new brand opts in through <code>brands.json</code> alone.</p></div>
+  </div>
+</section>
+
+<section id="tokens">
+  <h2>Reference · Design tokens</h2>
+  <p class="kicker">Three tiers, with the middle one fixed by contract</p>
+
+  <table>
+    <thead><tr><th style="width:22%">Tier</th><th style="width:36%">Example</th><th>Rule</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Primitives</strong></td><td><code>--size-4</code>, <code>--weight-600</code></td><td>Shared scale. Rarely changes.</td></tr>
+      <tr><td><strong>Semantic</strong><br><small>the contract</small></td><td><code>--color-accent</code>, <code>--font-heading</code></td><td>Every brand defines every name. CI fails otherwise.</td></tr>
+      <tr><td><strong>Component</strong></td><td><code>--card-radius</code>, <code>--header-height</code></td><td>Declared by the block, defaulting to a semantic token.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note key">
+    <b>The component tier is what prevents forks</b>
+    <p>A block writes <code>border-radius: var(--card-radius, var(--radius-m))</code>. A brand
+       needing squared-off, borderless cards overrides three lines in its own token file. No
+       variant, no fork, no shared file touched. <strong>Before proposing anything above L1, check
+       whether three component tokens would have done it.</strong> They usually would.</p>
+  </div>
+
+  <div class="code"><span class="filename">blocks/card/card.css</span><button class="copy" type="button">copy</button>
+<pre><code>.card {
+  --card-bg:      var(--color-surface-raised);
+  --card-radius:  var(--radius-m);
+  --card-padding: var(--space-4);
+  --card-border:  1px solid var(--color-border);
+
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+  border: var(--card-border);
+}</code></pre></div>
+  <div class="code"><span class="filename">styles/brands/beta.css</span><button class="copy" type="button">copy</button>
+<pre><code>:root[data-brand='beta'] {
+  --card-radius: var(--radius-none);
+  --card-border: none;
+  --card-bg:     var(--color-surface);
+}</code></pre></div>
+
+  <h3>Scoped brand overrides</h3>
+  <p>For a tweak too specific to deserve a token, put it in the shared block's CSS, scoped to the
+     brand attribute, capped at roughly 20% of the file. Past that cap the block is telling you
+     something: promote the difference to a component token, or accept that it has genuinely
+     diverged. A block whose CSS is half brand overrides is a fork nobody declared.</p>
+  <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>[data-brand='beta'] .header .nav-tools { order: -1; }</code></pre></div>
+</section>
+
+<section id="standards">
+  <h2>Reference · Standards &amp; budgets</h2>
+  <p class="kicker">EDS is fast because it does almost nothing</p>
+
+  <h3>JavaScript</h3>
+  <ul>
+    <li>ES modules, no build step. No transpiler, bundler, or framework.</li>
+    <li>ESLint Airbnb base, zero warnings. An inline disable needs a comment saying why.</li>
+    <li>No default exports except a block's <code>decorate</code>.</li>
+    <li>No new dependency without an ADR. Every kilobyte is on the critical path for every brand.</li>
+    <li>No secrets — these repositories are usually public. Endpoints come from the registry,
+        credentials from an edge worker.</li>
+    <li>Fail soft. Authors produce shapes you did not anticipate, and a block that throws takes
+        the page with it.</li>
+  </ul>
+
+  <h3>CSS</h3>
+  <ul>
+    <li>Custom properties for anything themable. Structural values no brand would change stay literal.</li>
+    <li>Component tokens declared at the top of each block's CSS.</li>
+    <li>Logical properties for layout, so right-to-left costs nothing.</li>
+    <li>Every selector scoped to the block. No <code>!important</code> without a comment.</li>
+  </ul>
+
+  <h3>Markup, UI, accessibility</h3>
+  <ul>
+    <li>The authored DOM carries meaning. <strong>Transform it, do not rebuild it.</strong></li>
+    <li>Buttons act, links navigate. A <code>&lt;div&gt;</code> with a click handler is a review finding.</li>
+    <li>One <code>&lt;h1&gt;</code>, heading order unbroken, correct landmarks.</li>
+    <li>Images through <code>createOptimizedPicture</code> with explicit width and height.</li>
+    <li>WCAG 2.2 AA: keyboard operable, visible focus, accessible names,
+        <code>prefers-reduced-motion</code> respected, live regions for async updates.</li>
+    <li>Empty and error states say what happened and what to do next.</li>
+    <li>Motion answers an action. Decorative entrance animations on every section are noise.</li>
+  </ul>
+
+  <h3>Naming</h3>
+  <table>
+    <thead><tr><th style="width:32%">Thing</th><th style="width:34%">Convention</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Block</td><td>lowercase kebab, named for capability</td><td><code>store-locator</code></td></tr>
+      <tr><td>Block files</td><td>folder name repeated exactly</td><td><code>store-locator/store-locator.js</code></td></tr>
+      <tr><td>Variant</td><td>lowercase kebab, authored in parentheses</td><td><code>Cards (compact, dark)</code></td></tr>
+      <tr><td>Semantic token</td><td><code>--&lt;role&gt;-&lt;name&gt;-&lt;modifier&gt;</code></td><td><code>--color-accent-hover</code></td></tr>
+      <tr><td>Component token</td><td><code>--&lt;block&gt;-&lt;property&gt;</code></td><td><code>--header-height</code></td></tr>
+      <tr><td>Brand key</td><td>lowercase alphanumeric, no hyphens</td><td><code>beta</code></td></tr>
+      <tr><td>Commit</td><td>Conventional Commits, brand in scope where relevant</td><td><code>fix(alpha-header): correct focus order</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Performance budgets</h3>
+  <table>
+    <thead><tr><th>Metric</th><th style="width:34%">Budget</th></tr></thead>
+    <tbody>
+      <tr><td>Lighthouse mobile, all four categories</td><td>100</td></tr>
+      <tr><td>LCP</td><td>&lt; 2.5 s (target &lt; 1.5 s)</td></tr>
+      <tr><td>CLS</td><td>&lt; 0.1</td></tr>
+      <tr><td>INP</td><td>&lt; 200 ms</td></tr>
+      <tr><td>Eager JS beyond <code>aem.js</code> + <code>scripts.js</code></td><td>&lt; 10 KB</td></tr>
+      <tr><td>Per-block JS</td><td>&lt; 15 KB uncompressed</td></tr>
+      <tr><td>Brand token file</td><td>&lt; 8 KB</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Eager</strong> loads only what the LCP needs. <strong>Lazy</strong> loads everything
+     else. <strong>Delayed</strong> carries every third-party tag without exception — analytics,
+     chat, consent, tag managers. That last rule is the highest-leverage line in this manual,
+     because third-party code arrives by accretion, one small tag at a time, and it is where EDS
+     projects lose their scores.</p>
+
+  <h3>Governance</h3>
+  <ul>
+    <li><strong>ADRs</strong> in <code>docs/adr/</code>, numbered, immutable once accepted,
+        superseded rather than edited. Required for any fork, any contract change, any new
+        dependency, any change to brand resolution.</li>
+    <li><strong>New shared blocks</strong> need a short RFC: what it does, why no existing block
+        covers it, which brands need it, its token surface.</li>
+    <li><strong>CODEOWNERS</strong> mirrors the layer model — shared blocks need a platform
+        reviewer, brand token files and forked blocks need that brand's team.</li>
+    <li><strong>Deprecation</strong> is explicit: marked in the README and model, kept a quarter,
+        then removed. Every fork carries a review date from the day it is created.</li>
+  </ul>
+</section>
+
+<section id="commands">
+  <h2>Reference · Command reference</h2>
+  <p class="kicker">Everything in one place</p>
+
+  <table>
+    <thead><tr><th style="width:52%">Command</th><th>Does</th></tr></thead>
+    <tbody>
+      <tr><td><code>aem up</code></td><td>Local dev server on port 3000</td></tr>
+      <tr><td><code>npm run lint</code></td><td>ESLint + Stylelint, zero warnings</td></tr>
+      <tr><td><code>node scripts/validate-tokens.mjs</code></td><td>Contract completeness, stray selectors, hardcoded literals, fork ratio</td></tr>
+      <tr><td><code>node scripts/validate-tokens.mjs --json</code></td><td>Same, machine-readable</td></tr>
+      <tr><td><code>node scripts/validate-skills.mjs</code></td><td>Skills present, parseable, pinned, undrifted</td></tr>
+      <tr><td><code>node scripts/validate-skills.mjs --update-lock</code></td><td>Record the approved skill versions</td></tr>
+      <tr><td><code>node scripts/onboard-brand.mjs &lt;key&gt; --dry-run</code></td><td>Plan a brand without writing</td></tr>
+      <tr><td><code>node scripts/onboard-brand.mjs &lt;key&gt; --from &lt;brand&gt;</code></td><td>Onboard, cloning an existing brand's shape</td></tr>
+      <tr><td><code>node scripts/onboard-brand.mjs &lt;key&gt; --check</code></td><td>Audit what is still outstanding</td></tr>
+      <tr><td><code>claude plugin validate .claude/skills</code></td><td>Frontmatter validation</td></tr>
+      <tr><td><code>/brand-block &lt;name&gt;</code></td><td>Scaffold or de-fork a block</td></tr>
+      <tr><td><code>/brand-onboard &lt;key&gt;</code></td><td>Guided brand onboarding</td></tr>
+      <tr><td><code>/brand-review</code></td><td>Multi-brand review of the current diff</td></tr>
+      <tr><td><code>/skills</code></td><td>List what the agent has loaded</td></tr>
+      <tr><td><code>/context</code></td><td>Show context cost, including MCP tools</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="trouble">
+  <h2>Reference · Troubleshooting</h2>
+  <p class="kicker">Failures that are quiet rather than loud</p>
+
+  <table>
+    <thead><tr><th style="width:36%">Symptom</th><th>Cause and fix</th></tr></thead>
+    <tbody>
+      <tr><td>A brand renders in another brand's colours</td>
+          <td>The token file never loaded. Check the brand key matches exactly between
+              <code>brands.json</code>, the CSS filename, and the <code>theme</code> metadata — an
+              inconsistent key is the usual cause.</td></tr>
+      <tr><td>One page has a wrong colour, the rest are fine</td>
+          <td>A contract token is defined but empty. Run
+              <code>validate-tokens.mjs</code>, which treats stubs as failures for this reason.</td></tr>
+      <tr><td>Flash of unstyled content on load</td>
+          <td>The brand stylesheet is not awaited before <code>appear</code>. Move the
+              <code>loadCSS</code> call into <code>loadEager</code>.</td></tr>
+      <tr><td>Layout shifts as fonts load</td>
+          <td>Fallback metrics not matched. Add <code>size-adjust</code>,
+              <code>ascent-override</code>, <code>descent-override</code> to the
+              <code>@font-face</code> rule.</td></tr>
+      <tr><td>Both brands' fonts download on every page</td>
+          <td>Fonts are preloaded in the shared <code>head.html</code>. Move them to the
+              brand token file.</td></tr>
+      <tr><td>Lighthouse dropped and nothing obvious changed</td>
+          <td>A third-party tag reached the eager or lazy phase. Everything third-party belongs
+              in <code>delayed.js</code>.</td></tr>
+      <tr><td>Authors cannot insert a new block</td>
+          <td>No Universal Editor model. A block without one is invisible to authors no matter
+              how good the code is.</td></tr>
+      <tr><td>An agent ignores the conventions</td>
+          <td>Check <code>/skills</code>. A personal skill of the same name shadows a project
+              one; enterprise shadows both. Distinct <code>brand-*</code> names and the plugin
+              namespace prevent this.</td></tr>
+      <tr><td>A skill never triggers on its own</td>
+          <td>Either the frontmatter did not parse — run <code>claude plugin validate</code> — or
+              the description was truncated. The skill listing has a character budget, so put the
+              key use case first.</td></tr>
+      <tr><td>Agent searches return unrelated results</td>
+          <td>It is looking up the wrong "EDS" or the wrong "AEM". Tell it to search
+              www.aem.live; the instruction belongs in <code>AGENTS.md</code>.</td></tr>
+      <tr><td>Packaging a skill fails on an unexpected key</td>
+          <td>Claude Code accepts frontmatter fields such as <code>paths</code> that the portable
+              skill specification does not. Keep the repository version and any uploaded version
+              as separate variants.</td></tr>
+      <tr><td>Config change has no effect</td>
+          <td>The project has both a legacy <code>fstab.yaml</code> and a Configuration Service
+              entry. Migrate fully and delete the file — running both means one silently wins.</td></tr>
+      <tr><td>Configuration Service rejects a change</td>
+          <td>Your Adobe user is not mapped as an admin on the GitHub organisation. That mapping
+              is a prerequisite, not an error to work around.</td></tr>
+      <tr><td>Every brand resolves to the default</td>
+          <td>On a repoless setup the path is <code>/</code> for all brands, so path matching
+              cannot discriminate. Populate <code>hosts</code> in the registry and set
+              <code>theme</code> in each site's bulk metadata.</td></tr>
+      <tr><td>Fork ratio creeping up</td>
+          <td>Working as intended — that is the metric doing its job. Review the newest forks
+              against the ladder before adding another.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="glossary">
+  <h2>Reference · Glossary</h2>
+  <p class="kicker">Terms used in a specific way here</p>
+  <table>
+    <tbody>
+      <tr><td style="width:26%"><strong>Fork ratio</strong></td><td>Share of blocks existing in more than one brand-specific copy. Target &lt;15%, review threshold 20%.</td></tr>
+      <tr><td><strong>Divergence Ladder</strong></td><td>The five-rung escalation from content to fork. Start at L0, stop at the first rung that works.</td></tr>
+      <tr><td><strong>Token contract</strong></td><td>The fixed set of semantic token names every brand must define. Enforced in CI.</td></tr>
+      <tr><td><strong>Component token</strong></td><td>A block-scoped custom property defaulting to a semantic token. The mechanism that prevents most forks.</td></tr>
+      <tr><td><strong>Brand registry</strong></td><td><code>brands.json</code> — the only place a brand is declared.</td></tr>
+      <tr><td><strong>Capability flag</strong></td><td>A named feature in the registry. Blocks branch on these, never on brand names.</td></tr>
+      <tr><td><strong>Variant</strong></td><td>An authored modifier in parentheses that becomes a class: <code>Cards (compact)</code> → <code>.cards.compact</code>.</td></tr>
+      <tr><td><strong>Eager / lazy / delayed</strong></td><td>The three loading phases. All third-party code belongs in delayed.</td></tr>
+      <tr><td><strong>Auto-block</strong></td><td>A block built from page content rather than authored directly, such as the header.</td></tr>
+      <tr><td><strong>ADR</strong></td><td>Architecture Decision Record. Required for any fork.</td></tr>
+      <tr><td><strong>Skill</strong></td><td>Instructions an agent loads when relevant. Guidance, not a gate — which is why CI checks it.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  <p>Multi-Brand EDS Setup Manual · v1.0. Replace <code>YOUR-ORG</code>,
+     <code>YOUR-PROJECT</code>, and the example brand keys <code>alpha</code> and
+     <code>beta</code> throughout. Adobe's Edge Delivery Services documentation is at
+     <a href="https://www.aem.live">www.aem.live</a>; the official agent skills are at
+     <a href="https://github.com/adobe/skills">github.com/adobe/skills</a>.</p>
+</footer>
+
+</main>
+</div>
+
+<script>
+  document.querySelectorAll('.copy').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const code = btn.parentElement.querySelector('code');
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        btn.textContent = 'copied'; btn.dataset.done = '1';
+        setTimeout(() => { btn.textContent = 'copy'; delete btn.dataset.done; }, 1600);
+      } catch {
+        btn.textContent = 'select manually';
+        setTimeout(() => { btn.textContent = 'copy'; }, 1600);
+      }
+    });
+  });
+
+  const links = new Map(
+    [...document.querySelectorAll('.rail nav a')].map((a) => [a.getAttribute('href').slice(1), a])
+  );
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const link = links.get(entry.target.id);
+      if (link && entry.isIntersecting) {
+        links.forEach((l) => l.removeAttribute('aria-current'));
+        link.setAttribute('aria-current', 'true');
+      }
+    });
+  }, { rootMargin: '-10% 0px -70% 0px' });
+  document.querySelectorAll('section[id]').forEach((s) => observer.observe(s));
+</script>
+</body>
+</html>

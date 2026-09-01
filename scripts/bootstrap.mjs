@@ -141,7 +141,7 @@ if (DRY) log('  --dry-run: nothing will actually be written\n'); else log('');
 
 /* --------------------------------------------- 1. canonical scripts + framework doc */
 
-log('Scripts and framework doc (steps 13, 19):');
+log('Scripts and framework doc (step 19):');
 for (const f of ['validate-tokens.mjs', 'validate-skills.mjs', 'onboard-brand.mjs']) {
   copyFile(join(MARKETPLACE_ROOT, 'scripts', f), join('scripts', f));
 }
@@ -212,7 +212,7 @@ warn('This is the baseline contract, not a finished one — verify against the b
 warn('design before treating any value as final, and split a token in two (see step 8 of');
 warn('the setup guide) if real data shows one name serving two distinct roles.');
 
-/* --------------------------------------------- 6. first brand (steps 7, 21) */
+/* --------------------------------------------- 6. first brand (step 7) */
 
 if (!args['skip-brand']) {
   if (!args['brand-key'] || !args['brand-name'] || !args.topology) {
@@ -234,7 +234,7 @@ if (!args['skip-brand']) {
   const hosts = args.topology === 'repoless' ? args.hosts.split(',').map((h) => h.trim()) : [];
   const indexPath = args.topology === 'repoless' ? '/query-index.json' : `${pathPrefix}/query-index.json`;
 
-  log(`\nBrand registry for "${key}" (steps 7, 21):`);
+  log(`\nBrand registry for "${key}" (step 7):`);
   writeJSON('brands.json', {
     default: key,
     brands: {
