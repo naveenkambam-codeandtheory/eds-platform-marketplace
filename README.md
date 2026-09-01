@@ -35,24 +35,39 @@ Skills alone aren't the whole framework — a new project also needs the validat
 scripts CI runs (`scripts/`) and the framework doc the `brand-architecture` skill cites
 as its authority (`docs/Multi-Brand-EDS-Framework.md`). Both live in this repo, at the
 root, precisely so a new project has one real, versioned place to pull them from
-instead of a local path only one machine has:
+instead of a local path only one machine has.
+
+`scripts/bootstrap.mjs` automates the mechanical half of setup guide Parts 1(6-12)/2/3 —
+scripts, docs, skills, `platform.json`, a starting `contract.json`, `brands.json` for
+brand one, CI, and the pre-commit hook. It does **not** automate the judgment calls:
+site topology, a brand's real token values, or anything content-related — those stay
+prompts (required flags) or explicit "you still need to do this" warnings in its output.
 
 ```bash
 git clone https://github.com/naveenkambam-codeandtheory/eds-platform-marketplace /tmp/eds-platform
-cp /tmp/eds-platform/scripts/*.mjs   YOUR-PROJECT/scripts/
-cp /tmp/eds-platform/docs/*.md       YOUR-PROJECT/docs/
+cd YOUR-PROJECT   # a real aem-boilerplate clone — the script checks for this
+
+# repoless (one site per brand):
+node /tmp/eds-platform/scripts/bootstrap.mjs \
+  --brand-key driv --brand-name DRiV \
+  --topology repoless --hosts main--driv--your-org.aem.page,main--driv--your-org.aem.live
+
+# path-prefix (one site, several brands under /alpha, /beta, ...):
+node /tmp/eds-platform/scripts/bootstrap.mjs \
+  --brand-key alpha --brand-name Alpha --topology path-prefix --path-prefix /alpha
 ```
 
-These scripts are generic on purpose — they read `platform.json` for anything
+Add `--dry-run` first to see what it would do without writing anything. It's safe to
+re-run — existing files are skipped unless you pass `--force`, and an existing
+`.husky/pre-commit` gets the gate lines prepended rather than overwritten. Run
+`node /tmp/eds-platform/scripts/bootstrap.mjs --help` for the rest of the flags (org/repo
+detection, `--skip-brand`, locale).
+
+The scripts it copies are generic on purpose — they read `platform.json` for anything
 project-specific, so they're never edited per project. Once the plugin above is
 installed, you can also just ask Claude: "bootstrap the multi-brand scripts and
 framework doc from eds-platform-marketplace" — `brand-architecture` knows to look here
 when `scripts/validate-tokens.mjs` is missing.
-
-CI workflow and pre-commit hook templates are also here, as skill assets
-(`plugins/brand-platform/skills/brand-architecture/assets/ci-quality-gates.example.yml`)
-once the plugin is installed — adapt the brand matrix and preview-URL pattern to your
-project's site topology (path-prefix vs. repoless) before using it.
 
 ## Why a plugin rather than only project skills
 
