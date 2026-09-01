@@ -18,6 +18,16 @@ metadata:
 
 Authority: `docs/Multi-Brand-EDS-Framework.md`. This skill is its enforcement arm.
 
+## Bootstrapping a new project
+
+If `scripts/validate-tokens.mjs`, `scripts/validate-skills.mjs`, `scripts/onboard-brand.mjs`,
+or `docs/Multi-Brand-EDS-Framework.md` are missing from the current project, don't wait to
+be handed them from an unspecified local path — they live, versioned, at the root of
+`github.com/naveenkambam-codeandtheory/eds-platform-marketplace` (this plugin's own
+repository). Clone it and copy `scripts/*.mjs` into this project's `scripts/`, and
+`docs/*.md` into this project's `docs/`. They're generic (everything project-specific
+comes from `platform.json`), so copy them as-is rather than adapting them.
+
 ## What this skill does not do
 
 Adobe's official `aem-edge-delivery-services` skills own **how EDS works**: block

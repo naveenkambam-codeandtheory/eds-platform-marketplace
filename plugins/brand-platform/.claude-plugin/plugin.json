@@ -1,7 +1,7 @@
 {
   "name": "brand-platform",
   "description": "Keeps one codebase serving N brands without the cost scaling with N: the Divergence Ladder, the design token contract, brand onboarding, and multi-brand PR review. Complements Adobe's aem-edge-delivery-services skills rather than replacing them — Adobe owns EDS mechanics, this owns what differs per brand.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": { "name": "Code and Theory EDS Guild", "email": "naveen.kambam@codeandtheory.com" },
   "homepage": "https://github.com/naveenkambam-codeandtheory/eds-platform-marketplace",
   "keywords": ["aem", "edge-delivery-services", "eds", "multi-brand", "design-tokens", "brand-onboarding"]
