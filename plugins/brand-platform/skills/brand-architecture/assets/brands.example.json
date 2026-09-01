@@ -1,0 +1,25 @@
+{
+  "default": "moog",
+  "brands": {
+    "moog": {
+      "key": "moog",
+      "name": "Moog Parts",
+      "pathPrefix": "/moog",
+      "hosts": ["moogparts.com", "www.moogparts.com"],
+      "locales": ["en-us", "en-ca", "fr-ca"],
+      "indexPath": "/moog/query-index.json",
+      "features": { "commerce": false, "partsFinder": true, "whereToBuy": true },
+      "endpoints": { "catalog": "/api/moog/catalog" }
+    },
+    "drivparts": {
+      "key": "drivparts",
+      "name": "DRiVParts",
+      "pathPrefix": "/drivparts",
+      "hosts": ["drivparts.com"],
+      "locales": ["en-us"],
+      "indexPath": "/drivparts/query-index.json",
+      "features": { "commerce": true, "partsFinder": true, "whereToBuy": true },
+      "endpoints": { "catalog": "/api/driv/catalog", "storefront": "/api/driv/storefront" }
+    }
+  }
+}

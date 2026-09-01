@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "tokens": {
+    "colour": [
+      "--color-accent", "--color-accent-hover", "--color-accent-contrast",
+      "--color-text", "--color-text-muted", "--color-text-inverse",
+      "--color-surface", "--color-surface-raised", "--color-surface-inverse",
+      "--color-border", "--color-focus", "--color-danger", "--color-success"
+    ],
+    "type": [
+      "--font-heading", "--font-body", "--font-mono",
+      "--font-size-xs", "--font-size-s", "--font-size-m", "--font-size-l",
+      "--font-size-xl", "--font-size-2xl", "--font-size-3xl",
+      "--line-height-tight", "--line-height-base", "--line-height-loose"
+    ],
+    "space": [
+      "--space-1", "--space-2", "--space-3", "--space-4",
+      "--space-6", "--space-8", "--space-12", "--space-16",
+      "--space-section", "--space-gutter"
+    ],
+    "shape": [
+      "--radius-none", "--radius-s", "--radius-m", "--radius-l", "--radius-full",
+      "--shadow-s", "--shadow-m", "--shadow-l"
+    ],
+    "layout": ["--layout-max-width", "--layout-content-width"],
+    "motion": ["--duration-fast", "--duration-base", "--duration-slow", "--easing-standard"],
+    "brand": ["--brand-logo", "--brand-logo-inverse", "--brand-favicon"]
+  }
+}

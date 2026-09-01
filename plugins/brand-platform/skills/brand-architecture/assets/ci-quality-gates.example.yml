@@ -1,0 +1,66 @@
+# .github/workflows/quality-gates.yml
+# Enforces the multi-brand EDS framework on every PR.
+# The fast gates run first so the slow ones only ever fail on something the
+# fast ones could not catch.
+
+name: Quality gates
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  static:
+    name: Lint and tokens
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: ESLint
+        run: npx eslint . --max-warnings 0
+      - name: Stylelint
+        run: npx stylelint "**/*.css" --max-warnings 0
+      - name: Token contract, literal scan, fork ratio
+        run: node scripts/validate-tokens.mjs
+      - name: Block manifest
+        # Every block needs .js, .css, a README and a Universal Editor model.
+        # A block authors cannot insert is not shippable.
+        run: node scripts/validate-blocks.mjs
+
+  tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - run: npm test
+
+  budgets:
+    name: Lighthouse and axe (per brand)
+    runs-on: ubuntu-latest
+    needs: static
+    strategy:
+      fail-fast: false
+      matrix:
+        # One run per brand. A blended average hides a regression in the
+        # smaller brand, which is exactly where nobody is looking.
+        brand: [moog, drivparts]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resolve preview URL
+        id: url
+        run: echo "url=https://${{ github.head_ref }}--${{ github.event.repository.name }}--${{ github.repository_owner }}.aem.page/${{ matrix.brand }}/" >> "$GITHUB_OUTPUT"
+      - name: Lighthouse
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: ${{ steps.url.outputs.url }}
+          configPath: ./.lighthouserc.json
+          uploadArtifacts: true
+      - name: axe
+        run: npx @axe-core/cli "${{ steps.url.outputs.url }}" --exit

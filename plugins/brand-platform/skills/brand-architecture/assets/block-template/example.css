@@ -1,0 +1,40 @@
+/*
+ * <block-name> block
+ *
+ * Component tokens are declared here with semantic defaults. A brand that needs
+ * a different treatment overrides the component token in its own file — no
+ * variant, no fork, no change to this file. Reach for this before anything else.
+ */
+
+.example {
+  --example-bg: var(--color-surface-raised);
+  --example-radius: var(--radius-m);
+  --example-padding: var(--space-4);
+  --example-gap: var(--space-4);
+
+  display: grid;
+  gap: var(--example-gap);
+  padding: var(--example-padding);
+  background: var(--example-bg);
+  border-radius: var(--example-radius);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+.example h2 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-tight);
+}
+
+/* Variant: layout differs, behaviour identical. */
+.example.compact { --example-padding: var(--space-2); --example-gap: var(--space-2); }
+
+/* Scoped brand tweak, for differences too small to deserve a token.
+   Keep these under ~20% of this file. Past that, promote to a component token
+   or the block has genuinely diverged. */
+[data-brand='drivparts'] .example { --example-radius: var(--radius-none); }
+
+@media (width >= 900px) {
+  .example { grid-template-columns: repeat(3, 1fr); }
+}

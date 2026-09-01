@@ -1,0 +1,31 @@
+{
+  "$comment": "Project shape. Every script reads this instead of hardcoding paths, so the same tooling works on a repo that lays things out differently — or on a different stack entirely.",
+
+  "platform": "aem-eds",
+
+  "paths": {
+    "components": "blocks",
+    "brandTokens": "styles/brands",
+    "tokenContract": "styles/tokens/contract.json",
+    "registry": "brands.json",
+    "icons": "icons",
+    "fonts": "fonts",
+    "queryConfig": "helix-query.yaml",
+    "authoringFilters": "component-filters.json",
+    "ciWorkflow": ".github/workflows/quality-gates.yml",
+    "docs": "docs/brands"
+  },
+
+  "conventions": {
+    "componentFilePattern": "<name>/<name>.{js,css}",
+    "forkPrefix": "{brandKey}-",
+    "brandAttribute": "data-brand",
+    "allowedLiteralColors": ["#fff", "#ffffff", "#000", "#000000"]
+  },
+
+  "budgets": {
+    "forkRatioTarget": 15,
+    "forkRatioMax": 20,
+    "brandTokenFileKb": 8
+  }
+}

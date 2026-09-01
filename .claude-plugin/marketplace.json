@@ -1,0 +1,17 @@
+{
+  "name": "eds-platform",
+  "owner": { "name": "Code and Theory EDS Guild", "email": "naveen.kambam@codeandtheory.com" },
+  "metadata": {
+    "description": "Multi-brand engineering standards that layer on top of Adobe's official skills. Adobe owns how EDS works; these own how one repo serves several brands.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "brand-platform",
+      "source": "./plugins/brand-platform",
+      "description": "Multi-brand architecture for AEM Edge Delivery Services: the Divergence Ladder, the design token contract, one-command brand onboarding, and multi-brand PR review. Install alongside aem-edge-delivery-services@adobe-skills.",
+      "version": "1.0.0",
+      "category": "engineering-standards"
+    }
+  ]
+}
