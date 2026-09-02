@@ -19,7 +19,9 @@
  * Exit:  0 clean, 1 violations.
  */
 
-import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import {
+  readFileSync, writeFileSync, existsSync, readdirSync, statSync,
+} from 'node:fs';
 import { join, relative } from 'node:path';
 import { createHash } from 'node:crypto';
 
@@ -56,7 +58,7 @@ function hashTree(dir) {
       if (statSync(full).isDirectory()) walk(full);
       else files.push(full);
     }
-  })(dir);
+  }(dir));
 
   const h = createHash('sha256');
   for (const f of files) {
