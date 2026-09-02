@@ -32,6 +32,7 @@ const DEFAULTS = {
     brandTokens: 'styles/brands',
     tokenContract: 'styles/tokens/contract.json',
     registry: 'brands.json',
+    registryModule: 'scripts/brands.js',
   },
   conventions: {
     forkPrefix: '{brandKey}-',
@@ -55,6 +56,7 @@ const CONTRACT = join(ROOT, cfg.paths.tokenContract);
 const BRAND_DIR = join(ROOT, cfg.paths.brandTokens);
 const COMPONENT_DIR = join(ROOT, cfg.paths.components);
 const REGISTRY = join(ROOT, cfg.paths.registry);
+const REGISTRY_MODULE = join(ROOT, cfg.paths.registryModule);
 
 const errors = [];
 const warnings = [];
@@ -116,6 +118,27 @@ if (brandKeys) {
   fileKeys
     .filter((k) => !brandKeys.includes(k))
     .forEach((k) => warn(`${cfg.paths.brandTokens}/${k}.css`, 'token file has no matching entry in the registry'));
+}
+
+// brand.js imports the registry as a module instead of fetching brands.json, to avoid a
+// network round trip before first paint (step 10 of the setup guide). That means it can
+// silently drift from brands.json — a brand missing here resolves to the default brand
+// instead of erroring, which is a much quieter failure than a 404. Only checked if the
+// project actually has this file; not every project uses the module pattern.
+if (brandKeys && existsSync(REGISTRY_MODULE)) {
+  try {
+    const mod = await import(`file://${REGISTRY_MODULE}`);
+    const moduleKeys = Object.keys(mod.default?.brands ?? {});
+    brandKeys
+      .filter((k) => !moduleKeys.includes(k))
+      .forEach((k) => fail(cfg.paths.registryModule,
+        `brand "${k}" is in ${cfg.paths.registry} but missing here — brand.js would silently resolve it to the default brand instead`));
+    moduleKeys
+      .filter((k) => !brandKeys.includes(k))
+      .forEach((k) => warn(cfg.paths.registryModule, `brand "${k}" has no matching entry in ${cfg.paths.registry} — stale?`));
+  } catch (e) {
+    fail(cfg.paths.registryModule, `could not load as a module: ${e.message}`);
+  }
 }
 
 // Selectors a brand file may contain. Anything else is styling, which means the

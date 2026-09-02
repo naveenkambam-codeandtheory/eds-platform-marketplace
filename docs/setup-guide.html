@@ -830,8 +830,8 @@ node /tmp/eds-platform/scripts/bootstrap.mjs --dry-run \
 // The registry is imported, not fetched. A fetch here costs a round trip before
 // the brand stylesheet can even be requested, and a second before first paint -
 // roughly 300 ms of LCP on a mid-tier mobile connection, on every page, for
-// every brand. Generate this file from brands.json at commit time, or keep the
-// two in sync with a CI check.
+// every brand. Keep this file's brand list in sync with brands.json by hand;
+// validate-tokens.mjs (step 19) fails the build if they drift.
 import REGISTRY from './brands.js';
 
 let resolved;
@@ -1446,7 +1446,11 @@ claude plugin validate .claude/skills</code></pre></div>
 <pre><code>node scripts/validate-tokens.mjs</code></pre></div>
       <p>This checks that every brand defines every contract token <em>with a real value</em>,
          that no brand file contains styling, that no shared block CSS carries a hardcoded colour
-         or font stack, and reports the fork ratio.</p>
+         or font stack, reports the fork ratio, and — if <code>scripts/brands.js</code> exists
+         (step 10's companion module) — that it actually lists the same brands as
+         <code>brands.json</code>. That last one catches a real, quiet failure mode: add a brand
+         to the registry, forget the module, and it silently resolves to the default brand
+         instead of erroring.</p>
       <details class="why">
         <summary>Why these files?</summary>
         <div class="why-body">
