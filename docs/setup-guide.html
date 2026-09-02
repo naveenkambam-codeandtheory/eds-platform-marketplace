@@ -1093,8 +1093,10 @@ component-definition.json  component-models.json  component-filters.json</div>
   <ol class="steps" style="counter-reset:st 12">
     <li><div>
       <h4>Write AGENTS.md and CLAUDE.md</h4>
-      <p><code>AGENTS.md</code> is the cross-agent standard — Cursor, Codex, and Claude Code all
-         read it. <code>CLAUDE.md</code> defers to it so there is one source of truth.</p>
+      <p><code>AGENTS.md</code> is the cross-agent standard — Cursor, Codex, Claude Code, and any
+         hosted migration/coding agent that connects to the repository (Adobe's Experience
+         Modernization Agent included) are all documented to read it.
+         <code>CLAUDE.md</code> defers to it so there is one source of truth.</p>
       <div class="code"><span class="filename">AGENTS.md</span><button class="copy" type="button">copy</button>
 <pre><code># Agent guide — multi-brand AEM Edge Delivery Services
 
@@ -1119,6 +1121,17 @@ own what differs per brand. Neither replaces the other.
     aem up
     npm run lint
     node scripts/validate-tokens.mjs
+
+## Checking what a brand still needs
+
+Onboarding (step 22) leaves deliberate TODOs, not guessed values. If you've just been
+handed this repository — including a fresh sync into a hosted agent — run this before
+doing anything else, instead of grepping for TODO by hand:
+
+    node scripts/onboard-brand.mjs &lt;key&gt; --check --json
+
+Machine-readable, exits 1 if anything's outstanding. The equivalent checklist for a
+person is at `docs/brands/&lt;key&gt;.md`.
 
 ## Hard rules
 
@@ -1155,6 +1168,10 @@ Claude-specific notes:
                 to Adobe's skills vs. this project's <code>brand-*</code> skills.</li>
             <li><strong>Setup</strong> — the exact commands to get from clone to a validated local
                 environment.</li>
+            <li><strong>Checking what a brand still needs</strong> — points any agent that syncs
+                this repo at <code>onboard-brand.mjs --check --json</code> instead of grepping for
+                <code>TODO</code>, so brand status is discoverable the same way regardless of
+                which agent picked the repository up.</li>
             <li><strong>Hard rules</strong> — the non-negotiables: never touch
                 <code>aem.js</code>, never branch on a brand name, tokens only in shared CSS,
                 third-party scripts stay in <code>delayed.js</code>, every block ships a UE model
@@ -1451,6 +1468,22 @@ claude plugin validate .claude/skills</code></pre></div>
          <code>brands.json</code>. That last one catches a real, quiet failure mode: add a brand
          to the registry, forget the module, and it silently resolves to the default brand
          instead of erroring.</p>
+      <div class="note warn">
+        <b>Check your lint config actually covers these — again</b>
+        <p>Same class of bug as step 6's <code>styles/**/*.css</code> gap, and it will bite here
+           too: <code>eslint .</code> with no <code>--ext</code> flag lints <code>.js</code> files
+           only. These three scripts are <code>.mjs</code>, so a project running plain
+           <code>eslint .</code> gets a silently clean report while these files carry real,
+           unchecked violations. Confirm <code>lint:js</code> reads
+           <code>eslint . --ext .js,.mjs</code> (or your project's equivalent), not just
+           <code>eslint .</code> — this was found live, after an entire session of "eslint clean"
+           runs that had never actually linted these files.</p>
+        <p>Node CLI scripts also legitimately use <code>console</code> output and
+           <code>for-of</code> loops — patterns a browser-oriented config like Airbnb's flags by
+           default. Add an override scoped to <code>scripts/*.mjs</code> disabling
+           <code>no-console</code>, <code>no-continue</code>, and <code>no-restricted-syntax</code>
+           there, rather than silencing them project-wide.</p>
+      </div>
       <details class="why">
         <summary>Why these files?</summary>
         <div class="why-body">
@@ -1721,6 +1754,13 @@ steps:
       <p>Reports every machine-checkable step: registry entry, token completeness, asset
          directories, index, CI matrix. Content and template steps are not machine-checkable and
          stay on the generated checklist.</p>
+      <p>Add <code>--json</code> for a machine-readable version of the same report — worth
+         reaching for whenever an <em>agent</em>, not a person, needs to know what's left on a
+         brand. Point it at whatever agent picks up this repository next (Claude Code, Cursor, an
+         Adobe Experience Modernization Agent session, anything reading <code>AGENTS.md</code>)
+         instead of having it grep for <code>TODO</code> by hand:</p>
+      <div class="code"><button class="copy" type="button">copy</button>
+<pre><code>node scripts/onboard-brand.mjs beta --check --json</code></pre></div>
       <div class="verify"><b>CHECK</b><p><code>All machine-checkable steps complete.</code></p></div>
     </div></li>
   </ol>
