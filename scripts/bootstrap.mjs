@@ -196,7 +196,7 @@ log('\nplatform.json (step 6):');
 writeJSON('platform.json', {
   platform: 'aem-eds',
   conventions: {
-    forkPrefix: '{brandKey}-',
+    forkSubdir: '{brandKey}',
     brandAttribute: 'data-brand',
     allowedLiteralColors: ['#fff', '#000'],
   },

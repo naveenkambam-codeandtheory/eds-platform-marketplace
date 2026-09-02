@@ -42,7 +42,7 @@ The document concludes that brand forks should get their own block name (`moog-h
 - **The stated benefit is thin.** "No custom loader logic needed" is true, but the alternative that the document rejects (nested `/blocks/brands/<brand>/`) is not the only alternative. EDS already ships two zero-code mechanisms for this: **block variants** and **content-driven configuration**. Neither requires touching `aem.js`.
 - **It makes brand a property of authoring discipline.** The document is admirably honest about this trade-off, but it should be treated as a defect rather than a trade-off. "Author training is the real brand boundary" means a mis-authored page silently ships the wrong brand's header. Guardrails should be structural, not procedural.
 
-**Change:** forks are allowed, keep the `<brand>-<block>` naming when a fork is genuinely warranted, but a fork now requires passing the Divergence Ladder (Section 7) and an ADR. Default is shared.
+**Change:** forks are allowed when genuinely warranted, but a fork never renames the block. It lands as a brand-named subfolder inside the capability's own folder — `<capability>/<brand>/<brand>.js` (plus `<brand>.css` if styling diverges too) — loaded by the block's own shared `<capability>.js`, which tries the override first and falls back to the shared implementation. The block keeps one name, one README, one UE model and filter entry forever; only the diverging brand pays for the extra file. A fork still requires passing the Divergence Ladder (Section 7) and an ADR. Default is shared. (Revised from an earlier version of this document that used `<brand>-<block>` sibling naming — see §2.4.)
 
 ### 2.2 Header and footer are the worst possible example of a fork
 
@@ -60,7 +60,9 @@ A mega-menu with an embedded part-number search versus a flat nav is a real stru
 
 ### 2.4 The document contradicts itself on folder structure
 
-Section 2 rejects nesting under `/blocks/brands/<brand>/`. Section 3's structure listing then includes `/blocks/{brand}/ ← brand-specific block overrides/additions (rare)` immediately before showing the flat prefixed layout. Pick one. This framework picks flat, prefixed, at `/blocks/<brand>-<block>/`, consistent with the default EDS loader.
+Section 2 rejects nesting under `/blocks/brands/<brand>/`. Section 3's structure listing then includes `/blocks/{brand}/ ← brand-specific block overrides/additions (rare)` immediately before showing the flat prefixed layout. Pick one.
+
+**Revised resolution:** neither of the two options on the table was right. A top-level `/blocks/{brand}/` tree reorganises the whole repo around brand, the opposite of "brand is data." A flat `/blocks/<brand>-<block>/` sibling keeps brand out of the top-level tree but pays for it in the UE authoring surface (§2.7) and forces a rename the day a second brand wants the same capability. This framework instead nests **one level inside the capability's own folder**: `/blocks/<capability>/<brand>/<brand>.js`. The EDS loader still only ever sees `<capability>/<capability>.js` — everything under `<brand>/` is loaded by that file's own code, not by the framework. This is consistent with the default EDS loader for every block that has no fork, and adds nothing to it for the rare one that does.
 
 ### 2.5 Missing: how the browser knows which brand it is
 
@@ -72,7 +74,9 @@ There is no mention of content sources, path strategy, per-brand indexes, per-br
 
 ### 2.7 Missing: the authoring surface cost of forking
 
-`component-definition.json`, `component-models.json` and `component-filters.json` are single files at the repo root. Every forked block adds an entry to all three. With prefixed forks as the default, the Universal Editor component picker shows authors `moog-header`, `drivparts-header`, `brandthree-header`, and filters are the only thing stopping the wrong one being inserted. This is a real, compounding tax that the document does not price in.
+`component-definition.json`, `component-models.json` and `component-filters.json` are single files at the repo root. With brand-prefixed sibling blocks as the default, every fork adds a second entry to all three, the Universal Editor component picker shows authors `moog-header`, `drivparts-header`, `brandthree-header`, and filters are the only thing stopping the wrong one being inserted. This is a real, compounding tax that the document does not price in.
+
+The nested convention adopted in §2.4 removes this tax rather than just pricing it in: a fork at `<capability>/<brand>/<brand>.js` is still `<capability>` in the picker, still one definition/model/filter entry, on every brand. The authoring surface stops growing with the fork count.
 
 ### 2.8 Missing: quality gates and non-functional standards
 
@@ -151,8 +155,12 @@ Single repo, multi-site. The document's reasoning holds and I agree with it, inc
 │   ├── parts-finder/              capability-named, brand-agnostic
 │   ├── where-to-buy/
 │   ├── part-details/
-│   ├── commerce-storefront/       endpoint from brand registry
-│   └── drivparts-hybris-legacy/   fork: requires ADR-XXX in header comment
+│   └── commerce-storefront/       endpoint from brand registry
+│       ├── commerce-storefront.js   shared implementation (dispatcher)
+│       ├── commerce-storefront.css
+│       └── drivparts/               fork: requires ADR-XXX in header comment
+│           ├── drivparts.js
+│           └── drivparts.css
 │
 ├── scripts/
 │   ├── aem.js                     L1 — untouched
@@ -186,7 +194,7 @@ Single repo, multi-site. The document's reasoning holds and I agree with it, inc
 └── .github/workflows/             lint · tokens · lighthouse · a11y
 ```
 
-Deltas from the attached document: `/blocks/{brand}/` is removed (contradiction resolved), `brands.json` and `styles/tokens/` are added, `locales.js` and `drivparts-paths.js` are folded into `scripts/lib/` and the brand registry respectively, and `docs/adr/` is added.
+Deltas from the attached document: the top-level `/blocks/{brand}/` tree is removed and replaced by a brand subfolder nested inside the diverging capability itself (contradiction resolved per §2.4, not by picking either of the original two options), `brands.json` and `styles/tokens/` are added, `locales.js` and `drivparts-paths.js` are folded into `scripts/lib/` and the brand registry respectively, and `docs/adr/` is added.
 
 ### 5.3 URL and content strategy
 
@@ -314,7 +322,7 @@ Because brand is resolved rather than authored, a mis-placed block is detectable
 | **L1** | **Tokens** — brand token values, including component tokens | Zero code | Colour, type, spacing, radius, elevation, logo |
 | **L2** | **Variant** — `Cards (compact)` → `.cards.compact` | ~10 lines CSS | Layout or density differs; behaviour is identical |
 | **L3** | **Config** — `hasFeature()` / `getBrandConfig()` branch | One branch | Behaviour differs on a named capability, not on a brand name |
-| **L4** | **Fork** — `<brand>-<block>/` | Permanent | Structure and behaviour are fundamentally different |
+| **L4** | **Fork** — `<block>/<brand>/<brand>.js` | Permanent | Structure and behaviour are fundamentally different |
 
 ### 7.1 Worked examples
 
@@ -322,7 +330,7 @@ Because brand is resolved rather than authored, a mis-placed block is detectable
 
 **Card corner radius and brand accent.** L1. `--card-radius`, `--card-accent`.
 
-**DRiV storefront on Hybris; Moog has no commerce.** L3. `commerce-storefront` reads `endpoints.storefront`; the block is filtered out of Moog's authoring surface entirely. Only if DRiV's Hybris integration turns out to require a genuinely different DOM contract does it become L4, as `drivparts-hybris-legacy`, with an ADR that states the trigger for retiring it.
+**DRiV storefront on Hybris; Moog has no commerce.** L3. `commerce-storefront` reads `endpoints.storefront`; the block is filtered out of Moog's authoring surface entirely. Only if DRiV's Hybris integration turns out to require a genuinely different DOM contract does it become L4, as `commerce-storefront/drivparts/drivparts.js`, with an ADR that states the trigger for retiring it.
 
 **Where-to-buy with a completely different result model per brand.** Likely L3 with a per-brand adapter in `scripts/lib/adapters/`, not a forked block. The rendering is the same; the data shape is not. Adapters are cheap; blocks are not.
 
@@ -331,7 +339,7 @@ Because brand is resolved rather than authored, a mis-placed block is detectable
 1. More than roughly 40% of the block's JavaScript would differ.
 2. The difference is structural or behavioural, not visual or textual.
 3. L0 to L3 have been genuinely attempted and the attempt is described in the PR.
-4. An ADR exists, is linked in a header comment in the block's JS, and names an owner and a review date.
+4. An ADR exists, is linked in a header comment in the **fork file's** header (`<block>/<brand>/<brand>.js`, not the shared `<block>.js`), and names an owner and a review date.
 
 ### 7.3 Fork budget
 
@@ -346,7 +354,7 @@ Small brand-specific styling that does not deserve a token lives inside the shar
 [data-brand='drivparts'] .header .nav-sections { --nav-gap: var(--space-6); }
 ```
 
-Capped at roughly 20% of the block's CSS. Past that cap, either promote the difference to a component token (preferred) or escalate to L4.
+Capped at roughly 20% of the block's CSS. Past that cap, either promote the difference to a component token (preferred) or escalate to L4 — move that brand's rules into `blocks/header/drivparts/drivparts.css`, loaded by `header.js` itself, rather than growing the `[data-brand]` scoping in the shared file.
 
 ---
 
@@ -356,7 +364,7 @@ Capped at roughly 20% of the block's CSS. Past that cap, either promote the diff
 |---|---|---|
 | Brand key | lowercase, no spaces, defined once in `brands.json` | `moog`, `drivparts` |
 | Shared block | lowercase kebab, named for capability | `parts-finder` |
-| Forked block | `<brand-key>-<capability>` | `drivparts-hybris-legacy` |
+| Forked block | `<capability>/<brand-key>/<brand-key>.*`, block name unchanged | `commerce-storefront/drivparts/drivparts.js` |
 | Variant | lowercase kebab, authored in parentheses | `Cards (compact, dark)` |
 | Block files | folder name repeated | `blocks/hero/hero.js`, `hero.css` |
 | Semantic token | `--<role>-<name>-<modifier>` | `--color-accent-hover` |
@@ -364,7 +372,7 @@ Capped at roughly 20% of the block's CSS. Past that cap, either promote the diff
 | Branch | `<type>/<ticket>-<slug>` | `feat/DRIV-412-parts-finder` |
 | Commit | Conventional Commits, brand in scope when applicable | `fix(moog-header): correct focus order` |
 
-`CODEOWNERS` mirrors this. Shared blocks require an architecture-guild reviewer; brand token files and brand-prefixed blocks require that brand's team. That way the expensive changes get the expensive review and the cheap ones do not.
+`CODEOWNERS` mirrors this. Shared blocks require an architecture-guild reviewer; brand token files and a fork's `<brand>/` subfolder require that brand's team, scoped by path (`blocks/*/drivparts/`) rather than by a whole renamed block. That way the expensive changes get the expensive review and the cheap ones do not.
 
 ---
 
@@ -412,7 +420,7 @@ Enforced by `scripts/validate-tokens.mjs` in the skill, wired into CI. A brand f
 
 - **Per-brand fragments.** `nav`, `footer`, and reusable fragments live under each brand prefix. The bulk metadata sheet sets `theme`, `nav`, and `footer` per folder, so brand assignment is content-side and needs no deploy.
 - **Placeholders.** `fetchPlaceholders('/moog')` reads `/moog/placeholders.json`. All user-facing strings in shared blocks come from placeholders, never from literals, so a new brand can restate every label without touching JS. This also gives localisation for free.
-- **Universal Editor.** `component-filters.json` scopes which blocks are offered where. Forked blocks must be filtered so the wrong brand's block cannot be inserted. Every new block ships its definition, model, and filter entry in the same PR as its code. A block without a model is invisible to authors and does not count as done.
+- **Universal Editor.** `component-filters.json` scopes which blocks are offered where. Brand-exclusive blocks (gated purely on a capability flag, no shared use case) must be filtered so the wrong brand's block cannot be inserted. A fork is different by design: it lives inside the same capability block and degrades to the shared implementation on every brand that has no override, so it stays insertable everywhere unless its authored content shape is genuinely incompatible with the shared one. Every new block ships its definition, model, and filter entry in the same PR as its code. A block without a model is invisible to authors and does not count as done.
 - **Templates.** Each brand gets template pages for its common page types, pre-populated with the correct blocks. This is what makes authoring fast; author training is a supplement to it, not a substitute.
 - **Redirects and sitemaps** are maintained per brand prefix.
 
@@ -484,7 +492,7 @@ Target: **a new brand live in preview within one day**, entirely inside L4 of th
 | # | Step | Owner | Output |
 |---|---|---|---|
 | 1 | Add brand object to `brands.json` | Dev | key, prefix, hosts, locales, features |
-| 2 | Run `node scripts/new-brand.mjs <key>` | Dev | token file, icon/font dirs, placeholders stub |
+| 2 | Run `node scripts/onboard-brand.mjs <key>` | Dev | token file, icon/font dirs, placeholders stub |
 | 3 | Fill token contract values from the brand's design system | Design + Dev | complete `styles/brands/<key>.css` |
 | 4 | Add fonts, icons, logo | Design | `fonts/<key>/`, `icons/<key>/` |
 | 5 | Create content tree, mount content source | Content lead | `/<key>/` with `nav`, `footer`, `placeholders.json`, `metadata` |
@@ -519,7 +527,7 @@ Target: **a new brand live in preview within one day**, entirely inside L4 of th
 
 **Phase 1 — Foundation (weeks 1 to 2).** Land `brands.json`, `brand.js`, resolution with the `appear` gate, `contract.json` with both brand files filled, CI for lint and tokens. Close the open question from the reference-repo review: confirm what already exists in `blocks/`, `scripts/`, `styles/` before writing migration tickets.
 
-**Phase 2 — De-fork (weeks 3 to 6).** Inventory every existing block against the Divergence Ladder. Merge `moog-*`/`drivparts-*` pairs down to shared + tokens + variants, header and footer first since they are the highest-traffic and the best proof. Rename capability blocks off their `drivparts-` prefix with redirects for authored references. Publish the starting fork ratio.
+**Phase 2 — De-fork (weeks 3 to 6).** Inventory every existing block against the Divergence Ladder. Merge `moog-*`/`drivparts-*` pairs down to shared + tokens + variants, header and footer first since they are the highest-traffic and the best proof. Rename capability blocks off their `drivparts-` prefix with redirects for authored references. Any pair that survives the ladder attempt genuinely (§7.2) becomes `<capability>/<brand>/<brand>.js` under the now-shared capability name, not a renamed sibling. Publish the starting fork ratio.
 
 **Phase 3 — Harden (weeks 7 to 10).** Lighthouse CI and axe per brand, per-brand RUM tagging, UE filters, template pages, ADR backlog for every surviving fork.
 
@@ -530,7 +538,7 @@ Target: **a new brand live in preview within one day**, entirely inside L4 of th
 ## Appendix A — ADR template
 
 ```markdown
-# ADR-0007: Fork drivparts-hybris-legacy
+# ADR-0007: Fork commerce-storefront/drivparts
 Status: Accepted · Date: 2026-09-01 · Owner: @driv-lead · Review by: 2027-03-01
 
 ## Context

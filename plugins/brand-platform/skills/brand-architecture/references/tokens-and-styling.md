@@ -158,7 +158,7 @@ Sometimes a brand needs a tweak too specific to deserve a token. Put it in the s
 [data-brand='drivparts'] .header .nav-tools { order: -1; }
 ```
 
-Cap this at roughly 20% of the block's CSS. Past that, the block is telling you something: either promote the difference to a component token, or the block has genuinely diverged and belongs at L4. A block whose CSS is half brand overrides is a fork that nobody declared.
+Cap this at roughly 20% of the block's CSS. Past that, the block is telling you something: either promote the difference to a component token, or the block has genuinely diverged and belongs at L4 — move that brand's rules into `blocks/<name>/<brand>/<brand>.css`, loaded by the block's own JS, rather than growing the `[data-brand]` scoping in the shared file. A block whose shared CSS is half brand overrides is a fork that nobody declared.
 
 ---
 

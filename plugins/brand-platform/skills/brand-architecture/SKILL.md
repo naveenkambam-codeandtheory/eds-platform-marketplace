@@ -64,11 +64,13 @@ Start at L0, stop at the first rung that works, never skip rungs, name the rung 
 | L1 | Token values, including component tokens | Colour, type, spacing, radius, elevation, logo |
 | L2 | Variant, `Cards (compact)` gives `.cards.compact` | Layout or density differs, behaviour identical |
 | L3 | `hasFeature()` / `getBrandConfig()` branch | Behaviour differs by named capability |
-| L4 | Fork to `<brand>-<block>/` | Structure and behaviour fundamentally differ |
+| L4 | Fork into a brand subfolder, `<block>/<brand>/<brand>.js` | Structure and behaviour fundamentally differ |
 
 L4 needs all four: more than 40% of the JS differs, the difference is structural not
 visual, L0 to L3 were genuinely attempted, and an ADR is linked in a header comment in
-the block's JS.
+the fork file (`<block>/<brand>/<brand>.js`), not the shared one. The block keeps its
+name, its README, and its Universal Editor model — only the diverging brand pays for
+the fork.
 
 Most requests that sound like L4 are L0 plus L2. When someone asks for a fork, walk the
 ladder out loud and show what L0 to L3 would look like before agreeing. That conversation

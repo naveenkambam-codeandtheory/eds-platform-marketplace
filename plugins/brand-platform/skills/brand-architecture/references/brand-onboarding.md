@@ -27,15 +27,17 @@ Key rules: lowercase, no spaces or hyphens, used verbatim everywhere (file names
 
 Feature flags are named for capabilities the site has, never for brands.
 
+**Path-prefixed vs. repoless.** The example above is path-prefixed: one host, several brands living under their own path segment. If the project is repoless instead (aem.live/developer/repoless-authoring — every brand is its own site with its own hostname, sharing this one codebase, which is how this project is set up: see `platform.json`'s `conventions.repoless`), `pathPrefix` is `"/"` and `indexPath` is `"/query-index.json"` for every brand, never `/brandthree`. `scripts/onboard-brand.mjs` reads `conventions.repoless` and defaults `--prefix` accordingly, but a brand added by hand still needs the right value — a repoless brand with a non-`/` prefix is a bug, not a variant (`node scripts/validate-tokens.mjs` fails the build on it).
+
 ---
 
 ## Step 2 — Scaffold
 
 ```bash
-node scripts/new-brand.mjs brandthree
+node scripts/onboard-brand.mjs brandthree
 ```
 
-Creates `styles/brands/brandthree.css` pre-filled with every contract token as a `TODO`, plus `icons/brandthree/`, `fonts/brandthree/`, and a placeholders stub. Then it prints the remaining checklist.
+Creates `styles/brands/brandthree.css` pre-filled with every contract token as a `TODO`, plus `icons/brandthree/`, `fonts/brandthree/`, and a placeholders stub. Then it prints the remaining checklist. Add `--dry-run` to preview first, or `--check` to audit a brand already onboarded.
 
 ---
 
@@ -69,7 +71,7 @@ Confirm no other brand's fonts load on this brand's pages. Check the network pan
 
 ## Step 5 — Content tree
 
-Content lead creates `/brandthree/` containing:
+Content lead creates `/brandthree/` containing (on a repoless brand, this is the site's root `/`, not a path segment):
 
 - `nav` and `footer` documents
 - `placeholders.json` with every key the shared blocks read
@@ -82,7 +84,7 @@ Copy the placeholder keys from an existing brand so nothing is missed. A missing
 
 ## Step 6 — Assign the brand
 
-In the bulk metadata sheet, set `theme: brandthree` for `/brandthree/**`, plus `nav` and `footer` paths if they differ from the convention.
+In the bulk metadata sheet, set `theme: brandthree` for `/brandthree/**` (on a repoless brand: `/**` in that brand's own content source, since the whole site is this one brand), plus `nav` and `footer` paths if they differ from the convention.
 
 This is what makes brand resolution work. Verify by loading a page and checking `document.documentElement.dataset.brand`.
 
@@ -100,7 +102,7 @@ still present on older projects and useful as a reference for the shape of a def
     target: /brandthree/query-index.json
 ```
 
-Add the brand's sitemap configuration and any launch redirects under its prefix.
+Add the brand's sitemap configuration and any launch redirects under its prefix (or at the site root, for a repoless brand).
 
 ---
 

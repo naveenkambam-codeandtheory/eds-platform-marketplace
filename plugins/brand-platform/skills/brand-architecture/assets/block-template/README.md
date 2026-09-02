@@ -29,5 +29,7 @@ overrides currently in the CSS.
 
 ## Fork status
 
-Shared. (If this were a fork: link the ADR, name the owner, state the re-merge
-review date and what would let us collapse it back.)
+Shared. (If a brand diverges at L4: add `<brand>/<brand>.js` — and `<brand>/<brand>.css`
+if styling diverges too — under this folder; this block's own name, model, and filter
+entry stay unchanged. Link the ADR in that fork file's header, name the owner, state the
+re-merge review date and what would let us collapse it back.)

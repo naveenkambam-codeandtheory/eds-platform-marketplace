@@ -20,7 +20,10 @@ of it.
 **The Divergence Ladder.** L0 content → L1 tokens → L2 variant → L3 config → L4 fork.
 Only the vocabulary changes. On a React codebase, L2 is a prop or a CSS-module modifier
 rather than an authored class in parentheses; L3 is the same capability check; L4 is
-still a second component with an ADR attached.
+still a brand-scoped subfolder inside the component (`Header/moog/Header.moog.tsx`, say)
+with an ADR attached, dynamically loaded by the shared component — never a sibling
+component under a new name. The point that carries across stacks: the fork is reached
+by path, not by renaming the thing authors and other code refer to.
 
 **The token contract.** Three tiers with the middle tier fixed, enforced in CI. This is
 stack-independent because it is really a rule about names, not about CSS.
@@ -62,7 +65,7 @@ Everything the tooling needs to know about a project's shape lives in `platform.
     "docs": "docs/brands"
   },
   "conventions": {
-    "forkPrefix": "{brandKey}-",
+    "forkSubdir": "{brandKey}",
     "brandAttribute": "data-brand",
     "allowedLiteralColors": ["#fff", "#000"]
   },
@@ -82,7 +85,7 @@ For a Next.js multi-brand app the same tooling runs against:
     "registry": "brands.config.json",
     "ciWorkflow": ".github/workflows/ci.yml"
   },
-  "conventions": { "forkPrefix": "{brandKey}-", "brandAttribute": "data-brand" }
+  "conventions": { "forkSubdir": "{brandKey}", "brandAttribute": "data-brand" }
 }
 ```
 

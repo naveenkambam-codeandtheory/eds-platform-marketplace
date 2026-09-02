@@ -18,9 +18,10 @@
 
   "conventions": {
     "componentFilePattern": "<name>/<name>.{js,css}",
-    "forkPrefix": "{brandKey}-",
+    "forkSubdir": "{brandKey}",
     "brandAttribute": "data-brand",
-    "allowedLiteralColors": ["#fff", "#ffffff", "#000", "#000000"]
+    "allowedLiteralColors": ["#fff", "#ffffff", "#000", "#000000"],
+    "repoless": true
   },
 
   "budgets": {

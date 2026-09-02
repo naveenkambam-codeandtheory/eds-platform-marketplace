@@ -19,18 +19,43 @@ blocks/<name>/
   <name>.js       required, default-exports decorate(block)
   <name>.css      required, tokens only
   README.md       required: purpose, variants, tokens read, authoring shape
+  <brand>/        optional, only for a declared L4 fork — see below
+    <brand>.js
+    <brand>.css
 ```
 
-Filenames match the folder name exactly. The EDS loader derives paths from the block's class name, so `blocks/parts-finder/parts-finder.js` is the only layout that works without custom loader logic.
+Filenames match the folder name exactly, one level down too: a fork subfolder is named for the brand key, and the files inside it are named for the brand key again. The EDS loader derives paths from the block's class name, so `blocks/parts-finder/parts-finder.js` is the only layout that loads without custom loader logic — everything under a `<brand>/` subfolder is loaded by the block's own JS, never by the EDS loader directly.
 
-Name blocks by **capability**, not by owner. `parts-finder` not `drivparts-parts-finder`, `commerce-storefront` not `drivparts-hybris-storefront`. An owner-named block has to be renamed the day a second brand wants it, and renaming breaks every page that references it by name. Brand-lock through Universal Editor filters and content availability instead.
+Name blocks by **capability**, not by owner, and never by brand. `parts-finder` not `drivparts-parts-finder`, `commerce-storefront` not `drivparts-hybris-storefront`. An owner-named or brand-named block has to be renamed the day a second brand wants it, and renaming breaks every page that references it by name and every Universal Editor filter entry pointing at it. Brand-lock through Universal Editor filters and content availability instead, not through the block's name.
 
-A `<brand>-<capability>` name is reserved for a real L4 fork, and carries an ADR link in a header comment:
+A brand-named subfolder inside the block — `blocks/<name>/<brand>/<brand>.js` and, if the styling diverges too, `blocks/<name>/<brand>/<brand>.css` — is reserved for a real L4 fork. The block keeps one name, one README, one Universal Editor model and filter entry; only the brand that actually diverged carries the extra weight. The fork file carries the ADR link in a header comment:
 
 ```js
+// blocks/header/drivparts/drivparts.js
 // FORK: see docs/adr/0007-drivparts-hybris-legacy.md
 // Owner: @driv-lead · Re-merge review: 2027-03-01
 ```
+
+The shared `<name>.js` is the only file EDS ever loads directly, so it stays the dispatcher — it tries the brand override first and falls back to its own shared implementation:
+
+```js
+import { loadCSS } from '../../scripts/aem.js';
+import { getBrand } from '../../scripts/brand.js';
+
+export default async function decorate(block) {
+  const { key } = getBrand();
+  const fork = await import(`./${key}/${key}.js`).catch(() => null);
+  if (fork?.default) {
+    loadCSS(`${window.hlx.codeBasePath}/blocks/header/${key}/${key}.css`).catch(() => {});
+    return fork.default(block);
+  }
+  return decorateShared(block);
+}
+
+function decorateShared(block) { /* the shared implementation every other brand gets */ }
+```
+
+The dynamic `import()` 404s silently for every brand without an override — that's the point, it's the same "ask, don't derive" shape as the top-level per-brand CSS load in `loadEager`. `node scripts/validate-tokens.mjs` finds the fork by path (`blocks/<name>/<brandKey>/`), not by a renamed block, so the fork ratio still measures it and CI still gates it — see `references/tokens-and-styling.md` § Scoped brand overrides.
 
 ---
 
@@ -216,3 +241,4 @@ Something authorable is something a content team can change on a Tuesday afterno
 | No null guards | One bad cell blanks the page | Guard and degrade |
 | Block with no UE model | Authors cannot insert it | Ship the model with the code |
 | Copying a block to tweak it | Two codebases forever | Variant or component token |
+| Renaming a block `<brand>-<capability>` to fork it | Breaks every page and UE filter that referenced the old name | `<capability>/<brand>/<brand>.js`, name unchanged |

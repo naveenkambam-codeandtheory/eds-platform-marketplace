@@ -8,7 +8,7 @@ Review in this order. Architecture problems are cheap to fix in review and expen
 
 - [ ] **Which Divergence Ladder rung is this?** Anything above L1 needs justification in the PR description.
 - [ ] Could this have been solved at a lower rung? Specifically: would three component tokens have done it?
-- [ ] Any new fork: does it meet all four criteria, and is the ADR linked in a header comment in the block's JS?
+- [ ] Any new fork: does it meet all four criteria, and is the ADR linked in a header comment in the fork file (`<block>/<brand>/<brand>.js`)? Is the block's own name and UE model untouched?
 - [ ] New block: is it named for a capability rather than a brand? Does an existing block already cover this?
 - [ ] Does this add a brand-specific code path that brand #3 will inherit for no reason?
 
@@ -40,7 +40,7 @@ Review in this order. Architecture problems are cheap to fix in review and expen
 ## 4. Authoring
 
 - [ ] `component-definition.json`, `component-models.json`, and `component-filters.json` updated in the same PR.
-- [ ] Forked or brand-exclusive blocks filtered so they cannot be inserted on the wrong brand.
+- [ ] Brand-exclusive blocks (gated purely by `hasFeature()`, no shared use case) filtered so they cannot be inserted on the wrong brand. A forked block (`<block>/<brand>/<brand>.js`) stays insertable everywhere by design — it degrades to the shared implementation on every other brand — so filter it only if the fork's authored content shape is genuinely incompatible with the shared one.
 - [ ] Variants documented in the block README and exposed in the model.
 - [ ] Block degrades gracefully on empty or unexpected authored content.
 

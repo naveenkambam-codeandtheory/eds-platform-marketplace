@@ -520,7 +520,7 @@ node /tmp/eds-platform/scripts/bootstrap.mjs --dry-run \
 <pre><code>{
   "platform": "aem-eds",
   "conventions": {
-    "forkPrefix":       "{brandKey}-",
+    "forkSubdir":       "{brandKey}",
     "brandAttribute":   "data-brand",
     "allowedLiteralColors": ["#fff", "#000"]
   },
@@ -542,9 +542,10 @@ node /tmp/eds-platform/scripts/bootstrap.mjs --dry-run \
           <ul>
             <li><code>platform</code> — a fixed identifier (<code>"aem-eds"</code>) scripts can
                 branch on if this framework is ever ported to another platform.</li>
-            <li><code>conventions.forkPrefix</code> — the directory-naming pattern
-                (<code>{brandKey}-</code>) that marks a block as an L4 fork, so tooling can tell a
-                fork from a shared block by name alone.</li>
+            <li><code>conventions.forkSubdir</code> — the subfolder-naming pattern
+                (<code>{brandKey}</code>) that marks an L4 fork inside a block, so tooling can find
+                the fork by path (<code>blocks/&lt;name&gt;/{brandKey}/</code>) without the block
+                itself ever being renamed.</li>
             <li><code>conventions.brandAttribute</code> — the DOM attribute
                 (<code>data-brand</code>) that carries the resolved brand key; CSS and scripts key
                 off it instead of a hardcoded selector.</li>
@@ -1718,8 +1719,13 @@ steps:
       <p>Update <code>component-filters.json</code> so authors on this brand see only blocks valid
          for it. If the brand has no commerce, a commerce block should not be offerable.</p>
       <p>Filters are the <strong>structural</strong> guardrail that replaces relying on authors to
-         remember. Every forked or brand-exclusive block must be filtered, or a mis-authored page
-         will silently render another brand's component.</p>
+         remember. Every brand-exclusive block &#8212; one gated purely by a capability flag, with
+         no shared use case &#8212; must be filtered, or a mis-authored page will silently render
+         another brand's component. An L4 fork is different: it lives inside the same block
+         (<code>&lt;name&gt;/&lt;brand&gt;/&lt;brand&gt;.js</code>), so it stays insertable on
+         every brand by design and degrades to the shared implementation everywhere the fork
+         doesn't apply &#8212; filter it only if its authored content shape is genuinely
+         incompatible with the shared one.</p>
       <details class="why">
         <summary>Why this file?</summary>
         <div class="why-body">
@@ -2023,9 +2029,32 @@ then run --check and tell me exactly what is left for me and for the content tea
     <div class="rung rung--fork">
       <div class="rung-id"><b>L4</b><i>forever</i></div>
       <div class="rung-body"><h5>Fork — requires an ADR</h5>
-        <p>A second block at <code>&lt;brand&gt;-&lt;capability&gt;/</code>. All four must hold: more than ~40% of the JavaScript differs; the difference is structural, not visual; L0–L3 were genuinely attempted and the attempt is described in the pull request; and an ADR exists, is linked in a header comment in the block's JS, and names an owner and a review date.</p>
+        <p>A brand-named subfolder inside the block, <code>&lt;capability&gt;/&lt;brand&gt;/&lt;brand&gt;.js</code>
+           (plus <code>&lt;brand&gt;.css</code> if styling diverges too) &#8212; never a
+           second block under a renamed folder. The block keeps one name, one README,
+           one Universal Editor model and filter entry; only the brand that diverged
+           carries the extra file. All four must hold: more than ~40% of the JavaScript
+           differs; the difference is structural, not visual; L0&#8211;L3 were genuinely
+           attempted and the attempt is described in the pull request; and an ADR exists,
+           is linked in a header comment in the <em>fork file's</em> header (not the
+           shared one), and names an owner and a review date.</p>
         <div class="rung-cost"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
     </div>
+  </div>
+
+  <div class="note">
+    <b>Why not rename the block?</b>
+    <p>The obvious-looking alternative &#8212; copy <code>blocks/header/</code> to
+       <code>blocks/drivparts-header/</code> and let the diverging brand's content point
+       at the new name &#8212; looks cheap and is not. It forces a different block name
+       into every page that inserts it, a second entry in
+       <code>component-definition.json</code>/<code>component-models.json</code>, and a
+       Universal Editor filter to keep the wrong brand from picking the wrong one.
+       A subfolder inside the original block sidesteps all three: the block's own
+       <code>&lt;name&gt;.js</code> stays the only thing EDS loads directly, tries
+       <code>./&lt;brand&gt;/&lt;brand&gt;.js</code> first, and falls back to its shared
+       implementation when that import 404s &#8212; the same "ask, don't derive" shape
+       as the top-level per-brand CSS load in <code>loadEager</code>.</p>
   </div>
 
   <h3>Worked example: two very different headers</h3>
@@ -2115,7 +2144,9 @@ if (hasFeature('commerce')) { … }</code></pre>
   <p>For a tweak too specific to deserve a token, put it in the shared block's CSS, scoped to the
      brand attribute, capped at roughly 20% of the file. Past that cap the block is telling you
      something: promote the difference to a component token, or accept that it has genuinely
-     diverged. A block whose CSS is half brand overrides is a fork nobody declared.</p>
+     diverged &#8212; move that brand's rules into <code>blocks/&lt;name&gt;/&lt;brand&gt;/&lt;brand&gt;.css</code>,
+     loaded by the block's own JS, rather than growing the <code>[data-brand]</code> scoping in the
+     shared file. A block whose shared CSS is half brand overrides is a fork nobody declared.</p>
   <div class="code"><button class="copy" type="button">copy</button>
 <pre><code>[data-brand='beta'] .header .nav-tools { order: -1; }</code></pre></div>
 </section>

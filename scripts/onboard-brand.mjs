@@ -12,7 +12,8 @@
  *
  * Options:
  *   --name "Brand Three"     display name            (default: capitalised key)
- *   --prefix /brandthree     content path prefix     (default: /<key>)
+ *   --prefix /brandthree     content path prefix     (default: / if platform.json sets
+ *                            conventions.repoless, else /<key> — see platform.json)
  *   --host brandthree.com    production hostname     (repeatable)
  *   --locale en-us           locale                  (repeatable, default en-us)
  *   --from moog              clone another brand's structure and flags, values blanked
@@ -77,9 +78,16 @@ const readJson = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const platform = existsSync(join(ROOT, 'platform.json')) ? readJson(join(ROOT, 'platform.json')) : {};
 const P = { ...DEFAULT_PATHS, ...(platform.paths ?? {}) };
 const brandAttr = platform.conventions?.brandAttribute ?? 'data-brand';
+// A repoless project (aem.live/developer/repoless-authoring: every brand is its own
+// site/hostname, sharing this one codebase) defaults new brands to the site root rather
+// than a path segment. Declare it once in platform.json; --prefix still overrides per brand.
+const REPOLESS = platform.conventions?.repoless ?? false;
 
 const name = opt('name', key.charAt(0).toUpperCase() + key.slice(1));
-const prefix = opt('prefix', `/${key}`);
+const prefix = opt('prefix', REPOLESS ? '/' : `/${key}`);
+// prefix is '/' for a repoless brand (its own hostname, content at the site root) —
+// avoid doubling the slash when building a path under it.
+const atPrefix = (suffix) => (prefix === '/' ? suffix : `${prefix}${suffix}`);
 const hosts = multi('host');
 const locales = multi('locale').length ? multi('locale') : ['en-us'];
 const from = opt('from', null);
@@ -127,7 +135,7 @@ if (CHECK) {
   });
   if (existsSync(join(ROOT, P.queryConfig))) {
     const yaml = readFileSync(join(ROOT, P.queryConfig), 'utf8');
-    if (!yaml.includes(`${prefix}/**`)) problems.push(`index missing: no ${prefix}/** entry in ${P.queryConfig}`);
+    if (!yaml.includes(atPrefix('/**'))) problems.push(`index missing: no ${atPrefix('/**')} entry in ${P.queryConfig}`);
     else ok.push(`index: ${P.queryConfig}`);
   }
   if (existsSync(join(ROOT, P.ciWorkflow))) {
@@ -180,7 +188,7 @@ if (registry.brands[key] && !FORCE) {
     pathPrefix: prefix,
     hosts,
     locales,
-    indexPath: `${prefix}/query-index.json`,
+    indexPath: atPrefix('/query-index.json'),
     // Cloning a sibling's flags is usually right: brands in one repo tend to share a
     // capability surface. Values are cloned, not the brand's identity.
     features: features.length
@@ -266,20 +274,20 @@ todo.push(`Add logo, inverse logo and favicon to ${P.icons}/${key}/; woff2 files
 
 if (existsSync(join(ROOT, P.queryConfig))) {
   const yaml = readFileSync(join(ROOT, P.queryConfig), 'utf8');
-  if (yaml.includes(`${prefix}/**`)) {
-    skipped.push(`index: ${prefix}/** already in ${P.queryConfig}`);
+  if (yaml.includes(atPrefix('/**'))) {
+    skipped.push(`index: ${atPrefix('/**')} already in ${P.queryConfig}`);
   } else {
     actions.push({
       label: 'content index',
       path: P.queryConfig,
       fn: () => {
-        const entry = `  ${key}:\n    include: ['${prefix}/**']\n    target: ${prefix}/query-index.json\n`;
+        const entry = `  ${key}:\n    include: ['${atPrefix('/**')}']\n    target: ${atPrefix('/query-index.json')}\n`;
         writeFileSync(join(ROOT, P.queryConfig), `${yaml.trimEnd()}\n${entry}`);
       },
     });
   }
 } else {
-  todo.push(`Add a ${prefix}/** index to your content indexing config`);
+  todo.push(`Add a ${atPrefix('/**')} index to your content indexing config`);
 }
 
 /* ------------------------------------------------------ 5. authoring filters */
@@ -344,7 +352,7 @@ node scripts/onboard-brand.mjs ${key} --check
 - [x] Registry entry in \`${P.registry}\`
 - [x] Token file \`${P.brandTokens}/${key}.css\` (values still TODO)
 - [x] \`${P.icons}/${key}/\` and \`${P.fonts}/${key}/\`
-- [x] Content index for \`${prefix}/**\`
+- [x] Content index for \`${atPrefix('/**')}\`
 - [x] Per-brand CI matrix entry
 
 ## Design and engineering
@@ -356,8 +364,8 @@ node scripts/onboard-brand.mjs ${key} --check
 
 ## Content
 
-- [ ] \`${prefix}/\` created with \`nav\`, \`footer\`, \`placeholders.json\`, \`metadata\`
-- [ ] \`theme: ${key}\` set in bulk metadata for \`${prefix}/**\`
+- [ ] \`${atPrefix('/')}\` created with \`nav\`, \`footer\`, \`placeholders.json\`, \`metadata\`
+- [ ] \`theme: ${key}\` set in bulk metadata for \`${atPrefix('/**')}\`
 - [ ] Placeholder keys copied from an existing brand so none render a fallback
 - [ ] Template page per page type
 - [ ] Sitemap and launch redirects

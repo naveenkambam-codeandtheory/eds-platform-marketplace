@@ -20,7 +20,7 @@ import {
   readFileSync, readdirSync, existsSync, statSync,
 } from 'node:fs';
 import {
-  join, basename, extname, relative,
+  join, basename, extname, relative, sep,
 } from 'node:path';
 
 const args = process.argv.slice(2);
@@ -39,8 +39,11 @@ const DEFAULTS = {
     registryModule: 'scripts/brands.js',
   },
   conventions: {
-    forkPrefix: '{brandKey}-',
+    // A fork lives at <component>/<brandKey>/<brandKey>.* — same component name,
+    // brand-scoped subfolder — never a sibling component renamed with a brand prefix.
+    forkSubdir: '{brandKey}',
     allowedLiteralColors: ['#fff', '#ffffff', '#000', '#000000'],
+    repoless: false,
   },
   budgets: { forkRatioTarget: 15, forkRatioMax: 20, brandTokenFileKb: 8 },
 };
@@ -146,6 +149,19 @@ if (brandKeys && existsSync(REGISTRY_MODULE)) {
   }
 }
 
+// A repoless project (aem.live/developer/repoless-authoring) resolves every brand to its
+// own hostname; a non-'/' pathPrefix on a repoless brand builds every ${pathPrefix}/…
+// path in shared block code one level too deep, and is silent until a block actually
+// does that construction. Caught here, once, instead of per-brand at runtime.
+if (brandKeys && cfg.conventions.repoless && registry.brands) {
+  brandKeys
+    .filter((k) => registry.brands[k].pathPrefix !== '/')
+    .forEach((k) => fail(
+      cfg.paths.registry,
+      `brand "${k}" has pathPrefix "${registry.brands[k].pathPrefix}", but conventions.repoless is true — every brand should resolve at its own hostname's root ("/"), not a path segment`,
+    ));
+}
+
 // Selectors a brand file may contain. Anything else is styling, which means the
 // "token file" has quietly become a fork.
 const ALLOWED_SELECTOR = /^(:root(\[[a-z-]+=['"][a-z0-9-]+['"]\])?|\[[a-z-]+=['"][a-z0-9-]+['"]\]|@media[^{]*|@supports[^{]*|@font-face|html|:where\([^)]*\))$/i;
@@ -191,8 +207,11 @@ const FONT_DECL = /font-family\s*:\s*([^;}]+)/gi;
 
 const literalFontStacks = (css) => [...css.matchAll(FONT_DECL)].map((m) => m[1].trim()).filter((v) => !v.startsWith('var('));
 
-const forkPrefixes = (brandKeys ?? []).map((k) => cfg.conventions.forkPrefix.replace('{brandKey}', k));
-const isFork = (p) => forkPrefixes.some((pre) => basename(p).startsWith(pre));
+const forkSubdirs = (brandKeys ?? []).map((k) => cfg.conventions.forkSubdir.replace('{brandKey}', k));
+// A fork file sits inside a brand-named subfolder of its component, e.g.
+// blocks/header/moog/moog.js — check path segments, not the filename.
+const isFork = (p) => relative(COMPONENT_DIR, p).split(sep).slice(0, -1)
+  .some((seg) => forkSubdirs.includes(seg));
 const allowedLiteral = new Set(cfg.conventions.allowedLiteralColors.map((c) => c.toLowerCase()));
 
 for (const file of walk(COMPONENT_DIR, '.css')) {
@@ -280,7 +299,11 @@ let forkStats = null;
 if (existsSync(COMPONENT_DIR) && brandKeys?.length) {
   const components = readdirSync(COMPONENT_DIR)
     .filter((d) => statSync(join(COMPONENT_DIR, d)).isDirectory());
-  const forks = components.filter((b) => forkPrefixes.some((p) => b.startsWith(p)));
+  // A component counts as forked if it has at least one brand-named subfolder,
+  // e.g. blocks/header/moog/ — the component itself keeps its shared name.
+  const forks = components.filter(
+    (b) => forkSubdirs.some((s) => existsSync(join(COMPONENT_DIR, b, s))),
+  );
   const ratio = components.length ? (forks.length / components.length) * 100 : 0;
   forkStats = { total: components.length, forks, ratio };
 
