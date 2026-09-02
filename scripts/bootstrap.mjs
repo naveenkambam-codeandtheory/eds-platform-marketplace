@@ -149,6 +149,24 @@ for (const f of readdirSync(join(MARKETPLACE_ROOT, 'docs'))) {
   copyFile(join(MARKETPLACE_ROOT, 'docs', f), join('docs', f));
 }
 
+// These scripts are just-copied .mjs files. eslint's `eslint .` defaults to .js only —
+// without --ext .mjs they're silently never linted, which is exactly how a real project
+// ran a "clean" lint for an entire session while these files carried 49 real errors.
+const pkgPath = join(TARGET, 'package.json');
+if (existsSync(pkgPath)) {
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+  const lintJs = pkg.scripts?.['lint:js'];
+  if (lintJs && lintJs.includes('eslint') && !lintJs.includes('.mjs')) {
+    if (DRY) {
+      log('  would fix   package.json lint:js (add --ext .mjs so scripts/*.mjs are actually linted)');
+    } else {
+      pkg.scripts['lint:js'] = `${lintJs.trimEnd()} --ext .js,.mjs`;
+      writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
+      done('package.json lint:js (added --ext .js,.mjs)');
+    }
+  }
+}
+
 /* --------------------------------------------- 2. committed project skills */
 
 log('\nProject skills (step 14):');

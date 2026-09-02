@@ -19,6 +19,9 @@
  *   --features a,b           capability flags to enable
  *   --dry-run                print the plan, write nothing
  *   --check                  audit an existing brand for completeness
+ *   --json                   with --check, print machine-readable JSON instead of text
+ *                            (for an agent that just synced this repo and needs to know
+ *                            what's outstanding, without parsing prose)
  *   --force                  overwrite files that already exist
  *
  * Exit: 0 success, 1 refused or incomplete.
@@ -43,6 +46,7 @@ const multi = (n) => argv.reduce((acc, a, i) => (a === `--${n}` && argv[i + 1] ?
 
 const DRY = flag('dry-run');
 const CHECK = flag('check');
+const AS_JSON = flag('json');
 const FORCE = flag('force');
 const ROOT = process.cwd();
 
@@ -132,12 +136,23 @@ if (CHECK) {
     else ok.push(`CI matrix: ${P.ciWorkflow}`);
   }
 
-  console.log(`\nBrand "${key}" audit\n`);
-  ok.forEach((o) => console.log(`  ok    ${o}`));
-  problems.forEach((p) => console.log(`  TODO  ${p}`));
-  console.log(problems.length
-    ? `\n${problems.length} item(s) outstanding. Content and template steps are not machine-checkable; see ${P.docs}/${key}.md.`
-    : '\nAll machine-checkable steps complete. Content, templates and the visual gates remain.');
+  if (AS_JSON) {
+    console.log(JSON.stringify({
+      brand: key,
+      complete: problems.length === 0,
+      ok,
+      outstanding: problems,
+      checklist: `${P.docs}/${key}.md`,
+      note: 'Content and template steps are not machine-checkable; see checklist.',
+    }, null, 2));
+  } else {
+    console.log(`\nBrand "${key}" audit\n`);
+    ok.forEach((o) => console.log(`  ok    ${o}`));
+    problems.forEach((p) => console.log(`  TODO  ${p}`));
+    console.log(problems.length
+      ? `\n${problems.length} item(s) outstanding. Content and template steps are not machine-checkable; see ${P.docs}/${key}.md.`
+      : '\nAll machine-checkable steps complete. Content, templates and the visual gates remain.');
+  }
   process.exit(problems.length ? 1 : 0);
 }
 
@@ -385,6 +400,6 @@ console.log('\nRemaining, in order:\n');
 todo.forEach((t, i) => console.log(`  ${i + 1}. ${t}`));
 console.log(`\n  Checklist: ${P.docs}/${key}.md`);
 console.log(`  Progress:  node scripts/onboard-brand.mjs ${key} --check`);
-console.log(`  Gate:      node scripts/validate-tokens.mjs\n`);
+console.log('  Gate:      node scripts/validate-tokens.mjs\n');
 
 if (DRY) console.log('Dry run: nothing was written.\n');
